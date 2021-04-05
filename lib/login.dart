@@ -1,5 +1,6 @@
 //import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 //import 'package:google_fonts/google_fonts.dart';
 
 class Login extends StatefulWidget {
@@ -7,9 +8,177 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 class _LoginState extends State<Login> {
+  int attemptCount;
+  String username;
+  String pass;
+  final _formKey = GlobalKey<FormState>();
+
+  Future<void> showAlertDialog(String title, String message) async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false, //User must tap button
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  Text(message),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        }
+    );
+  }
 Widget build(BuildContext context) {
   print('Build called');
   return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: new Stack(
+        children: <Widget>[
+          new Container(
+            decoration: new BoxDecoration(
+              image: new DecorationImage(image: new AssetImage("white_background.jpg"), fit: BoxFit.fill,),
+            ),
+          ),
+          new Center(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top:250.0,left:40,right:40),
+                            child:Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: TextFormField(
+                                    decoration: new InputDecoration(
+                                      labelText: "Username",
+                                      fillColor: Colors.white,
+                                      border: new OutlineInputBorder(
+                                        borderRadius: new BorderRadius.circular(25.0),
+                                        borderSide: new BorderSide(
+                                        ),
+                                      ),
+                                      //fillColor: Colors.green
+                                    ),
+                                    keyboardType: TextInputType.emailAddress,
+                                    style: new TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                    validator: (value) {
+                                      if(value.isEmpty) {
+                                        return 'Please enter your username';
+                                      }
+                                      return null;
+                                    },
+
+                                    onSaved: (String value) {
+                                      username = value;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top:10.0,left:40,right:40),
+                            child:Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: TextFormField(
+                                    decoration: new InputDecoration(
+                                      labelText: "Password",
+                                      fillColor: Colors.white,
+                                      border: new OutlineInputBorder(
+                                        borderRadius: new BorderRadius.circular(25.0),
+                                        borderSide: new BorderSide(
+                                        ),
+                                      ),
+                                      //fillColor: Colors.green
+                                    ),
+                                    style: new TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                    keyboardType: TextInputType.text,
+                                    obscureText: true,
+                                    enableSuggestions: false,
+                                    autocorrect: false,
+
+                                    validator: (value) {
+                                      if(value.isEmpty) {
+                                        return 'Please enter your password';
+                                      }
+                                      if(value.length < 8) {
+                                        return 'Password must be at least 8 characters';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (String value) {
+                                      pass = value;
+                                    },
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.only(top:80.0),
+                              child: SignInButtonBuilder(
+                                text: "Login",
+                                icon:Icons.arrow_forward_ios_rounded,
+                                onPressed: () {
+                                  if(_formKey.currentState.validate()) {
+                                    _formKey.currentState.save();
+
+                                    if(pass.length == 0) {//TODO
+                                      showAlertDialog("Error", 'Passwords must match');
+                                    }
+                                    else {
+                                      //TODO: Sign up process
+                                    }
+                                    //
+                                    setState(() {
+                                      attemptCount += 1;
+                                    });
+
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(content: Text('Logging in')));
+                                  }
+                                },
+                                backgroundColor: Colors.blueGrey[200],
+                              )
+                          ),
+
+
+                        ],
+                      )
+                  )
+
+
+                ]
+            ),
+          )
+        ],
+      )
+
 
   );
  }

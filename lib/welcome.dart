@@ -37,7 +37,9 @@ class _WelcomeState extends State<Welcome> {
                       child: SignInButtonBuilder(
                         text: "Login",
                         icon:Icons.arrow_forward_ios_rounded,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/login');
+                        },
                         backgroundColor: Colors.blueGrey[200],
                       )
                     ),
@@ -47,7 +49,9 @@ class _WelcomeState extends State<Welcome> {
                       child: SignInButton(
                         Buttons.Email,
                         text: "Sign Up with Email",
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/sign_up');
+                        },
                         )
 
              ),

@@ -22,6 +22,7 @@ environment:
 
 dependencies:
   flutter_signin_button: ^2.0.0
+  email_validator: ^2.0.1
   flutter:
     sdk: flutter
 
@@ -57,6 +58,7 @@ flutter:
   assets:
     - welcome_background.jpg
     - logo.png
+    - white_background.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

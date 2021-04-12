@@ -9,8 +9,8 @@ class Onboard extends StatefulWidget {
 class _Onboard extends State<Onboard> {
   int pageIndex=0;
   List<String> titles=[
-    "Welcome to Weasel, the cutest network ",
-    "Connect your friends around the Word!",
+    "Welcome to Weasel",
+    "Connect your friends!",
     "Lets Weasel !!!"];
   List<String> descriptions=[
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
@@ -49,6 +49,19 @@ class _Onboard extends State<Onboard> {
                                 color: Colors.black87),
                           ),
                         ),
+                        SizedBox(height:30),
+                        new Container(
+                            width: 190.0,
+                            height: 190.0,
+                            decoration: new BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: new DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: AssetImage('assets/onboard_image_1.jpg')
+                            ),
+                            ),
+                        ),
+
                         Padding(
                             padding: const EdgeInsets.only(top:44.0),
                             child:Text(

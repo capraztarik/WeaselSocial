@@ -59,6 +59,7 @@ flutter:
     - welcome_background.jpg
     - logo.png
     - white_background.jpg
+    - onboard_image_1.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

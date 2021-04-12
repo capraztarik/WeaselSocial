@@ -7,6 +7,7 @@ class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
+
 class _LoginState extends State<Login> {
   int attemptCount;
   String username;
@@ -36,150 +37,144 @@ class _LoginState extends State<Login> {
               ),
             ],
           );
-        }
-    );
+        });
   }
-Widget build(BuildContext context) {
-  print('Build called');
-  return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: new Stack(
-        children: <Widget>[
-          new Container(
-            decoration: new BoxDecoration(
-              image: new DecorationImage(image: new AssetImage("white_background.jpg"), fit: BoxFit.fill,),
+
+  Widget build(BuildContext context) {
+    print('Build called');
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Stack(
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/white_background.jpg"),
+                  fit: BoxFit.fill,
+                ),
+              ),
             ),
-          ),
-          new Center(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top:250.0,left:40,right:40),
-                            child:Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: TextFormField(
-                                    decoration: new InputDecoration(
-                                      labelText: "Username",
-                                      fillColor: Colors.white,
-                                      border: new OutlineInputBorder(
-                                        borderRadius: new BorderRadius.circular(25.0),
-                                        borderSide: new BorderSide(
+            Center(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 250.0, left: 40, right: 40),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: "Username",
+                                        fillColor: Colors.white,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(25.0),
+                                          borderSide: BorderSide(),
                                         ),
+                                        //fillColor: Colors.green
                                       ),
-                                      //fillColor: Colors.green
+                                      keyboardType: TextInputType.emailAddress,
+                                      style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      validator: (value) {
+                                        if (value.isEmpty) {
+                                          return 'Please enter your username';
+                                        }
+                                        return null;
+                                      },
+                                      onSaved: (String value) {
+                                        username = value;
+                                      },
                                     ),
-                                    keyboardType: TextInputType.emailAddress,
-                                    style: new TextStyle(
-                                      fontFamily: "Poppins",
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                    validator: (value) {
-                                      if(value.isEmpty) {
-                                        return 'Please enter your username';
-                                      }
-                                      return null;
-                                    },
-
-                                    onSaved: (String value) {
-                                      username = value;
-                                    },
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top:10.0,left:40,right:40),
-                            child:Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: TextFormField(
-                                    decoration: new InputDecoration(
-                                      labelText: "Password",
-                                      fillColor: Colors.white,
-                                      border: new OutlineInputBorder(
-                                        borderRadius: new BorderRadius.circular(25.0),
-                                        borderSide: new BorderSide(
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 10.0, left: 40, right: 40),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: "Password",
+                                        fillColor: Colors.white,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(25.0),
+                                          borderSide: BorderSide(),
                                         ),
+                                        //fillColor: Colors.green
                                       ),
-                                      //fillColor: Colors.green
+                                      style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      keyboardType: TextInputType.text,
+                                      obscureText: true,
+                                      enableSuggestions: false,
+                                      autocorrect: false,
+                                      validator: (value) {
+                                        if (value.isEmpty) {
+                                          return 'Please enter your password';
+                                        }
+                                        if (value.length < 8) {
+                                          return 'Password must be at least 8 characters';
+                                        }
+                                        return null;
+                                      },
+                                      onSaved: (String value) {
+                                        pass = value;
+                                      },
                                     ),
-                                    style: new TextStyle(
-                                      fontFamily: "Poppins",
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                    keyboardType: TextInputType.text,
-                                    obscureText: true,
-                                    enableSuggestions: false,
-                                    autocorrect: false,
-
-                                    validator: (value) {
-                                      if(value.isEmpty) {
-                                        return 'Please enter your password';
-                                      }
-                                      if(value.length < 8) {
-                                        return 'Password must be at least 8 characters';
-                                      }
-                                      return null;
-                                    },
-                                    onSaved: (String value) {
-                                      pass = value;
-                                    },
                                   ),
-                                ),
-
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                              padding: const EdgeInsets.only(top:80.0),
-                              child: SignInButtonBuilder(
-                                text: "Login",
-                                icon:Icons.arrow_forward_ios_rounded,
-                                onPressed: () {
-                                  if(_formKey.currentState.validate()) {
-                                    _formKey.currentState.save();
+                            Padding(
+                                padding: const EdgeInsets.only(top: 80.0),
+                                child: SignInButtonBuilder(
+                                  text: "Login",
+                                  icon: Icons.arrow_forward_ios_rounded,
+                                  onPressed: () {
+                                    if (_formKey.currentState.validate()) {
+                                      _formKey.currentState.save();
 
-                                    if(pass.length == 0) {//TODO
-                                      showAlertDialog("Error", 'Passwords must match');
+                                      if (pass.length == 0) {
+                                        //TODO
+                                        showAlertDialog(
+                                            "Error", 'Passwords must match');
+                                      } else {
+                                        //TODO: Sign up process
+                                      }
+                                      //
+                                      setState(() {
+                                        attemptCount += 1;
+                                      });
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text('Logging in')));
                                     }
-                                    else {
-                                      //TODO: Sign up process
-                                    }
-                                    //
-                                    setState(() {
-                                      attemptCount += 1;
-                                    });
-
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(content: Text('Logging in')));
-                                  }
-                                },
-                                backgroundColor: Colors.blueGrey[200],
-                              )
-                          ),
-
-
-                        ],
-                      )
-                  )
-
-
-                ]
-            ),
-          )
-        ],
-      )
-
-
-  );
- }
+                                  },
+                                  backgroundColor: Colors.blueGrey[200],
+                                )),
+                          ],
+                        ))
+                  ]),
+            )
+          ],
+        ));
+  }
 }

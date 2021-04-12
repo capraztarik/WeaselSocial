@@ -10,60 +10,53 @@ class Welcome extends StatefulWidget {
 class _WelcomeState extends State<Welcome> {
   Widget build(BuildContext context) {
     return Scaffold(
-        body: new Stack(
-          children: <Widget>[
-            new Container(
-              decoration: new BoxDecoration(
-                image: new DecorationImage(image: new AssetImage("welcome_background.jpg"), fit: BoxFit.cover,),
-              ),
+        body: Stack(
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/welcome_background.jpg"),
+              fit: BoxFit.cover,
             ),
-            new Center(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(40.0),
-                      child:Text(
-                        'Weasel',
-                        style: TextStyle(
-                            fontSize: 80.0,
-                            fontFamily: "Rancho",
-                            fontStyle:FontStyle.italic,
-                            color: Colors.black87),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top:370.0),
-                      child: SignInButtonBuilder(
-                        text: "Login",
-                        icon:Icons.arrow_forward_ios_rounded,
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/login');
-                        },
-                        backgroundColor: Colors.blueGrey[200],
-                      )
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(top:12.0),
-                      child: SignInButton(
-                        Buttons.Email,
-                        text: "Sign Up with Email",
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/sign_up');
-                        },
-                        )
-
-             ),
-
-
-                  ]
-              ),
-            )
-          ],
+          ),
+        ),
+        Center(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Text(
+                    'Weasel',
+                    style: TextStyle(
+                        fontSize: 80.0,
+                        fontFamily: "Rancho",
+                        fontStyle: FontStyle.italic,
+                        color: Colors.black87),
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.only(top: 370.0),
+                    child: SignInButtonBuilder(
+                      text: "Login",
+                      icon: Icons.arrow_forward_ios_rounded,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      backgroundColor: Colors.blueGrey[200],
+                    )),
+                Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: SignInButton(
+                      Buttons.Email,
+                      text: "Sign Up with Email",
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/sign_up');
+                      },
+                    )),
+              ]),
         )
-
-    );
-
+      ],
+    ));
   }
 }

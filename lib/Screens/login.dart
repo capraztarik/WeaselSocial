@@ -1,6 +1,8 @@
 //import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:weasel_social_media_app/Utilities/color.dart';
+import 'package:weasel_social_media_app/Utilities/styles.dart';
 //import 'package:google_fonts/google_fonts.dart';
 
 class Login extends StatefulWidget {
@@ -72,7 +74,7 @@ class _LoginState extends State<Login> {
                                     child: TextFormField(
                                       decoration: InputDecoration(
                                         labelText: "Username",
-                                        fillColor: Colors.white,
+                                        fillColor: AppColors.primary,
                                         border: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(25.0),
@@ -81,10 +83,7 @@ class _LoginState extends State<Login> {
                                         //fillColor: Colors.green
                                       ),
                                       keyboardType: TextInputType.emailAddress,
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontWeight: FontWeight.w800,
-                                      ),
+                                      style: kLabelTextStyle,
                                       validator: (value) {
                                         if (value.isEmpty) {
                                           return 'Please enter your username';
@@ -117,10 +116,7 @@ class _LoginState extends State<Login> {
                                         ),
                                         //fillColor: Colors.green
                                       ),
-                                      style: TextStyle(
-                                        fontFamily: "Poppins",
-                                        fontWeight: FontWeight.w800,
-                                      ),
+                                      style: kLabelTextStyle,
                                       keyboardType: TextInputType.text,
                                       obscureText: true,
                                       enableSuggestions: false,
@@ -146,6 +142,7 @@ class _LoginState extends State<Login> {
                                 padding: const EdgeInsets.only(top: 80.0),
                                 child: SignInButtonBuilder(
                                   text: "Login",
+                                  fontSize: 16,
                                   icon: Icons.arrow_forward_ios_rounded,
                                   onPressed: () {
                                     if (_formKey.currentState.validate()) {
@@ -168,7 +165,7 @@ class _LoginState extends State<Login> {
                                               content: Text('Logging in')));
                                     }
                                   },
-                                  backgroundColor: Colors.blueGrey[200],
+                                  backgroundColor: AppColors.buttonColor,
                                 )),
                           ],
                         ))

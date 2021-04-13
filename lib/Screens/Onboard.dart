@@ -1,6 +1,7 @@
 //import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:weasel_social_media_app/welcome.dart';
+import 'package:weasel_social_media_app/Screens/welcome.dart';
+import '../Utilities/color.dart';
 
 class Onboard extends StatefulWidget {
   @override
@@ -58,7 +59,7 @@ class _Onboard extends State<Onboard> {
                         fontSize: 40.0,
                         fontFamily: "Rancho",
                         fontStyle: FontStyle.italic,
-                        color: Colors.black87),
+                        color: AppColors.onboardColor),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -77,11 +78,14 @@ class _Onboard extends State<Onboard> {
                   child: Text(
                     descriptions[pageIndex],
                     style: TextStyle(
-                        fontSize: 20.0,
+                        fontSize: 22.0,
                         fontFamily: "Rancho",
                         fontStyle: FontStyle.italic,
-                        color: Colors.black87),
+                        color: AppColors.onboardColor),
                   ),
+                ),
+                SizedBox(
+                  height: 20.0,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0),
@@ -91,7 +95,22 @@ class _Onboard extends State<Onboard> {
                       Visibility(
                         visible: _visible,
                         child: ElevatedButton(
-                            child: Text('Previous'),
+                            child: Text(
+                              'Previous',
+                              style: TextStyle(
+                                letterSpacing: 1.5,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              primary: AppColors.onboardButtonColor,
+                              elevation: 5.0,
+                              padding: EdgeInsets.all(15.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
                             onPressed: () {
                               if (pageIndex == 1) {
                                 _toggle();
@@ -101,7 +120,22 @@ class _Onboard extends State<Onboard> {
                             }),
                       ),
                       ElevatedButton(
-                          child: Text('Next'),
+                          style: ElevatedButton.styleFrom(
+                            primary: AppColors.onboardButtonColor,
+                            elevation: 5.0,
+                            padding: EdgeInsets.all(15.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child: Text(
+                            'Next',
+                            style: TextStyle(
+                              letterSpacing: 1.5,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           onPressed: () {
                             if (pageIndex == 0) {
                               _toggle();

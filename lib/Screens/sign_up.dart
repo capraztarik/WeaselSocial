@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:weasel_social_media_app/Utilities/color.dart';
+import 'package:weasel_social_media_app/Utilities/styles.dart';
 //import 'package:http/http.dart' as http;
 
 class SignUp extends StatefulWidget {
@@ -67,7 +69,7 @@ class _SignUpState extends State<SignUp> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 250.0, left: 40, right: 40),
+                            top: 220.0, left: 40, right: 40),
                         child: Row(
                           children: [
                             Expanded(
@@ -75,7 +77,7 @@ class _SignUpState extends State<SignUp> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                   labelText: "Enter Email",
-                                  fillColor: Colors.white,
+                                  fillColor: AppColors.primary,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
                                     borderSide: BorderSide(),
@@ -83,10 +85,7 @@ class _SignUpState extends State<SignUp> {
                                   //fillColor: Colors.green
                                 ),
                                 keyboardType: TextInputType.emailAddress,
-                                style: TextStyle(
-                                  fontFamily: "Poppins",
-                                  fontWeight: FontWeight.w800,
-                                ),
+                                style: kLabelTextStyle,
                                 validator: (value) {
                                   if (value.isEmpty) {
                                     return 'Please enter your e-mail';
@@ -114,17 +113,14 @@ class _SignUpState extends State<SignUp> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                   labelText: "Username",
-                                  fillColor: Colors.white,
+                                  fillColor: AppColors.primary,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
                                     borderSide: BorderSide(),
                                   ),
                                   //fillColor: Colors.green
                                 ),
-                                style: TextStyle(
-                                  fontFamily: "Poppins",
-                                  fontWeight: FontWeight.w800,
-                                ),
+                                style: kLabelTextStyle,
                                 keyboardType: TextInputType.text,
                                 validator: (value) {
                                   if (value.isEmpty) {
@@ -153,17 +149,14 @@ class _SignUpState extends State<SignUp> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                   labelText: "Password",
-                                  fillColor: Colors.white,
+                                  fillColor: AppColors.primary,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
                                     borderSide: BorderSide(),
                                   ),
                                   //fillColor: Colors.green
                                 ),
-                                style: TextStyle(
-                                  fontFamily: "Poppins",
-                                  fontWeight: FontWeight.w800,
-                                ),
+                                style: kLabelTextStyle,
                                 keyboardType: TextInputType.text,
                                 obscureText: true,
                                 enableSuggestions: false,
@@ -194,18 +187,15 @@ class _SignUpState extends State<SignUp> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                   labelText: "Password Again",
-                                  fillColor: Colors.white,
+                                  fillColor: AppColors.primary,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
                                     borderSide: BorderSide(),
                                   ),
                                   //fillColor: Colors.green
                                 ),
-                                keyboardType: TextInputType.emailAddress,
-                                style: TextStyle(
-                                  fontFamily: "Poppins",
-                                  fontWeight: FontWeight.w800,
-                                ),
+                                keyboardType: TextInputType.text,
+                                style: kLabelTextStyle,
                                 obscureText: true,
                                 enableSuggestions: false,
                                 autocorrect: false,
@@ -225,9 +215,10 @@ class _SignUpState extends State<SignUp> {
                             ),
                           ])),
                       Padding(
-                        padding: const EdgeInsets.only(top: 80.0),
+                        padding: const EdgeInsets.only(top: 40.0),
                         child: SignInButtonBuilder(
                           text: "Sign Up",
+                          fontSize: 16,
                           icon: Icons.arrow_forward_ios_rounded,
                           onPressed: () {
                             if (_formKey.currentState.validate()) {
@@ -248,7 +239,7 @@ class _SignUpState extends State<SignUp> {
                                   SnackBar(content: Text('Logging in')));
                             }
                           },
-                          backgroundColor: Colors.blueGrey[200],
+                          backgroundColor: AppColors.buttonColor,
                         ),
                       ),
                     ],

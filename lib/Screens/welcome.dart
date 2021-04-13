@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:weasel_social_media_app/Utilities/color.dart';
+import 'package:weasel_social_media_app/Utilities/styles.dart';
 
 class Welcome extends StatefulWidget {
   @override
@@ -28,28 +30,31 @@ class _WelcomeState extends State<Welcome> {
                   padding: const EdgeInsets.all(40.0),
                   child: Text(
                     'Weasel',
-                    style: TextStyle(
-                        fontSize: 80.0,
-                        fontFamily: "Rancho",
-                        fontStyle: FontStyle.italic,
-                        color: Colors.black87),
+                    style: kHeadingTextStyle,
                   ),
                 ),
                 Padding(
-                    padding: const EdgeInsets.only(top: 370.0),
-                    child: SignInButtonBuilder(
-                      text: "Login",
-                      icon: Icons.arrow_forward_ios_rounded,
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/login');
-                      },
-                      backgroundColor: Colors.blueGrey[200],
-                    )),
+                  padding: const EdgeInsets.only(top: 370.0),
+                  child: SignInButtonBuilder(
+                    text: "Login",
+                    fontSize: 16,
+                    icon: Icons.arrow_forward_ios_rounded,
+                    elevation: 5,
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    backgroundColor: AppColors.buttonColor,
+                  ),
+                ),
                 Padding(
                     padding: const EdgeInsets.only(top: 12.0),
-                    child: SignInButton(
-                      Buttons.Email,
+                    child: SignInButtonBuilder(
+                      //Buttons.Email,
+                      icon: Icons.mail,
                       text: "Sign Up with Email",
+                      elevation: 5,
+                      fontSize: 16,
+                      backgroundColor: Colors.brown[600],
                       onPressed: () {
                         Navigator.pushNamed(context, '/sign_up');
                       },

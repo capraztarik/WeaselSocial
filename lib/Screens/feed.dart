@@ -1,13 +1,13 @@
-
 import 'package:flutter/material.dart';
-import 'package:weasel_social_media_app/Utilities/demo_values.dart';
+//import 'package:weasel_social_media_app/Utilities/demo_values.dart';
 import 'package:weasel_social_media_app/widgets/post.dart';
 
 class Feed extends StatefulWidget {
   _Feed createState() => _Feed();
 }
+
 class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
-  List<PostCard> feedData=[];
+  List<PostCard> feedData = [];
 
   @override
   void initState() {
@@ -33,7 +33,12 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white30,
-        title: Text("Weasel"),
+        title: Text(
+          "Weasel",
+          style: TextStyle(
+            color: Colors.black87,
+          ),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: _refresh,
@@ -52,33 +57,30 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
 
   _loadFeed() async {
     _generateFeed();
-    setState(() {
-    });
+    setState(() {});
   }
 
   _getFeed() async {
     print("Starting getFeed");
-     _generateFeed();
-    setState(() {
-
-    });
+    _generateFeed();
+    setState(() {});
   }
 
   @override
   bool get wantKeepAlive => true;
 
   _generateFeed() {
-    PostCard temp=PostCard
-      (username: "tarikcapraz",
+    PostCard temp = PostCard(
+      username: "tarikcapraz",
       location: "Istanbul",
       caption: "ThrowBack Thursday",
-      mediaUrl: "https://www.apple.com/v/macbook-pro-16/c/images/meta/og__csakh451i0eq_large.png",
+      mediaUrl:
+          "https://www.apple.com/v/macbook-pro-16/c/images/meta/og__csakh451i0eq_large.png",
       postId: "001",
       ownerId: "001",
     );
-  for(int x=0;x<4;x++){
-    feedData.add(temp);
-  }
+    for (int x = 0; x < 4; x++) {
+      feedData.add(temp);
+    }
   }
 }
-

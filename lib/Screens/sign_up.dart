@@ -228,7 +228,10 @@ class _SignUpState extends State<SignUp> {
                                 showAlertDialog(
                                     "Error", 'Passwords must match');
                               } else {
-                                //TODO: Sign up process
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/navigator',
+                                    (Route<dynamic> route) => false);
                               }
                               //
                               setState(() {

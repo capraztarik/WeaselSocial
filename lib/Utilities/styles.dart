@@ -19,6 +19,11 @@ final kLabelLightTextStyle = TextStyle(
   fontSize: 13.0,
 );
 
+final kTextStyle = TextStyle(
+  fontSize: 20.0,
+  letterSpacing: -0.7,
+);
+
 final kLabelTextStyle = TextStyle(
   fontWeight: FontWeight.w800,
   fontSize: 20.0,

@@ -154,6 +154,10 @@ class _LoginState extends State<Login> {
                                             "Error", 'Passwords must match');
                                       } else {
                                         //TODO: Sign up process
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            '/navigator',
+                                            (Route<dynamic> route) => false);
                                       }
                                       //
                                       setState(() {
@@ -172,7 +176,6 @@ class _LoginState extends State<Login> {
                   ]),
             )
           ],
-        )
-    );
+        ));
   }
 }

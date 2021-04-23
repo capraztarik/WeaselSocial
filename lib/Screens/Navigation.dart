@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:weasel_social_media_app/Screens/Search.dart';
+import 'package:weasel_social_media_app/Screens/profile.dart';
 import 'feed.dart';
 
 class NormalBottomNavBar extends StatefulWidget {
@@ -17,7 +18,7 @@ class NormalBottomNavBarState extends State<NormalBottomNavBar> {
     SearchPage(),
     Feed(),
     SearchPage(),
-    Feed(),
+    ProfilePage(userId: "mesutozil"),
   ];
 
   void onTabTapped(int index) {

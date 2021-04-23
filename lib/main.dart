@@ -6,6 +6,7 @@ import 'package:weasel_social_media_app/Screens/Onboard.dart';
 import 'Screens/Navigation.dart';
 import 'Screens/feed.dart';
 import 'Screens/login.dart';
+import 'Screens/profile.dart';
 
 void main() => runApp(MaterialApp(
       home: Welcome(),
@@ -19,5 +20,6 @@ void main() => runApp(MaterialApp(
         '/search': (context) => SearchPage(),
         '/navigator': (context) => NormalBottomNavBar(),
         '/feed': (context) => Feed(),
+        '/profile': (context) => ProfilePage(),
       },
     ));

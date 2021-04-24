@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:weasel_social_media_app/Screens/Search.dart';
 import 'package:weasel_social_media_app/Screens/profile.dart';
 import 'feed.dart';
+import 'notifications.dart';
 
 class NormalBottomNavBar extends StatefulWidget {
   NormalBottomNavBar({Key key}) : super(key: key);
@@ -17,7 +18,7 @@ class NormalBottomNavBarState extends State<NormalBottomNavBar> {
     Feed(),
     SearchPage(),
     Feed(),
-    SearchPage(),
+    Notifications(),
     ProfilePage(userId: "mesutozil"),
   ];
 

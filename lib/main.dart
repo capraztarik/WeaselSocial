@@ -6,6 +6,7 @@ import 'package:weasel_social_media_app/Screens/Onboard.dart';
 import 'Screens/Navigation.dart';
 import 'Screens/feed.dart';
 import 'Screens/login.dart';
+import 'Screens/notifications.dart';
 import 'Screens/profile.dart';
 
 void main() => runApp(MaterialApp(
@@ -21,5 +22,6 @@ void main() => runApp(MaterialApp(
         '/navigator': (context) => NormalBottomNavBar(),
         '/feed': (context) => Feed(),
         '/profile': (context) => ProfilePage(),
+        '/notifications': (context) => Notifications(),
       },
     ));

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:weasel_social_media_app/Utilities/color.dart';
-import 'package:weasel_social_media_app/widgets/post.dart';
-import 'package:weasel_social_media_app/widgets/user.dart';
+import 'package:weasel_social_media_app/widgets/post_view.dart';
+import 'package:weasel_social_media_app/models/user.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
-import 'package:weasel_social_media_app/widgets/user.dart';
-import 'package:weasel_social_media_app/widgets/post.dart';
+import 'package:weasel_social_media_app/models/user.dart';
+import 'package:weasel_social_media_app/models/post_info.dart';
 
-class Edit_profile extends StatefulWidget{
+class EditProfile extends StatefulWidget{
   @override
-  _Edit_profileState createState() => _Edit_profileState();
+  _EditProfile createState() => _EditProfile();
 
 
 }
 
 
-class _Edit_profileState extends State<Edit_profile> {
+class _EditProfile extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -23,7 +23,7 @@ void main() => runApp(MaterialApp(
         '/navigator': (context) => NormalBottomNavBar(),
         '/feed': (context) => Feed(),
         '/profile': (context) => ProfilePage(),
-        '/edit_profile': (context) => Edit_profile(),
+        '/edit_profile': (context) => EditProfile(),
         '/notifications': (context) => Notifications(),
       },
     ));

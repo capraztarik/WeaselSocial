@@ -8,6 +8,7 @@ import 'Screens/feed.dart';
 import 'Screens/login.dart';
 import 'Screens/notifications.dart';
 import 'Screens/profile.dart';
+import 'Screens/edit_profile.dart';
 
 void main() => runApp(MaterialApp(
       home: Welcome(),
@@ -22,6 +23,7 @@ void main() => runApp(MaterialApp(
         '/navigator': (context) => NormalBottomNavBar(),
         '/feed': (context) => Feed(),
         '/profile': (context) => ProfilePage(),
+        '/edit_profile': (context) => Edit_profile(),
         '/notifications': (context) => Notifications(),
       },
     ));

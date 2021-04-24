@@ -45,7 +45,7 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
     setState(() {});
   }
   editProfile(){
-    Navigator.pushNamed(context, '/editProfile');
+    Navigator.pushNamed(context, '/edit_profile');
   }
   unfollowUser(){
 

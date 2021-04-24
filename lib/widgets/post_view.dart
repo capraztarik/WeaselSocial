@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:weasel_social_media_app/Utilities/demo_values.dart';
 
 class PostCard extends StatefulWidget {
 
@@ -8,8 +7,9 @@ class PostCard extends StatefulWidget {
       this.location,
       this.caption,
       this.mediaUrl,
-      this.postId,
-      this.ownerId,}
+      this.profilePhotoUrl,
+      this.likeCount,
+    }
       );
 
   factory PostCard.fromJSON(Map data) {
@@ -18,22 +18,24 @@ class PostCard extends StatefulWidget {
       location: data['location'],
       caption: data['caption'],
       mediaUrl: data['mediaUrl'],
-      ownerId: data['ownerId'],
-      postId: data['postId'],
+      profilePhotoUrl:data['profilePhotoUrl'],
     );
   }
   final String username;
   final String location;
   final String caption;
-  final String postId;
-  final String ownerId;
   final String mediaUrl;
+  final String profilePhotoUrl;
+  final int likeCount;
   _PostCard createState() =>
       _PostCard(
         username: this.username,
         location: this.location,
         caption:this.caption,
-        postId:this.postId,
+        mediaUrl:this.mediaUrl,
+        profilePhotoUrl:this.profilePhotoUrl,
+        likeCount: this.likeCount,
+
       );
 }
 
@@ -41,8 +43,8 @@ class _PostCard extends State<PostCard> {
   final String username;
   final String location;
   final String caption;
-  final String postId;
-  final String ownerId;
+  final String mediaUrl;
+  final String profilePhotoUrl;
   int likeCount;
   bool liked=false;
 
@@ -51,9 +53,10 @@ class _PostCard extends State<PostCard> {
         this.username,
         this.location,
         this.caption,
-        this.postId,
         this.likeCount,
-        this.ownerId});
+        this.mediaUrl,
+        this.profilePhotoUrl,
+      });
 
 
 
@@ -76,49 +79,56 @@ class _PostCard extends State<PostCard> {
           color: color,
         ),
         onTap: () {
-          _likePost(postId);
+          //_likePost(postId);
         });
   }
-  void _likePost(String postId2) {
+  void _likePost(/*String postId2*/) {
     bool _liked =false;
 
     if (_liked) {
       print('removing like');
       _liked=false;
-      likeCount--;
+      this.likeCount--;
     }
 
     if (!_liked) {
       print('liked');
        _liked=true;
-      likeCount++;
+      this.likeCount++;
   }
   }
 
-  GestureDetector buildLikeableImage() {
+  GestureDetector buildLikeableImage({String mediaUrl}) {
     return GestureDetector(
-      onDoubleTap: () => _likePost(postId),
-      child: Image.asset(DemoValues.postImage)
+      onDoubleTap: () =>
+          _likePost(/*postId*/),
+      child: Image.network(mediaUrl),
     );
   }
 
-  buildPostHeader({String ownerId}) {
+  buildPostHeader({String ownerId,String location,String profilePhotoUrl}) {
     if (ownerId == null) {
       return Text("owner error");
     }
     return ListTile(
       leading: CircleAvatar(
-        backgroundImage: AssetImage(DemoValues.userImage),
+        //backgroundImage: AssetImage(DemoValues.userImage),
+        backgroundImage:NetworkImage(profilePhotoUrl),
         backgroundColor: Colors.grey,
       ),
       title: GestureDetector(
-        child: Text(username),
+        child: Text(ownerId),
         onTap: () {
           //openProfile(context, ownerId);
         },
       ),
-      subtitle: Text("location"),
-      trailing: const Icon(Icons.more_vert),
+      subtitle: Text(location),
+      trailing: GestureDetector(
+        child:  Icon(Icons.more_vert),
+        onTap: () {
+          //openPostSettings();
+        },
+      )
     );
 
   }
@@ -129,8 +139,8 @@ class _PostCard extends State<PostCard> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        buildPostHeader(ownerId: username),
-        buildLikeableImage(),
+        buildPostHeader(ownerId: this.username,location:this.location,profilePhotoUrl:this.profilePhotoUrl),
+        buildLikeableImage(mediaUrl:this.mediaUrl),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[

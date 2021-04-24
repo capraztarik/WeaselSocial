@@ -21,7 +21,7 @@ void main() => runApp(MaterialApp(
         '/search': (context) => SearchPage(),
         '/navigator': (context) => NormalBottomNavBar(),
         '/feed': (context) => Feed(),
-        '/profile': (context) => ProfilePage(),
+        '/profile': (context) => ProfilePage(),//should go own profile
         '/notifications': (context) => Notifications(),
       },
     ));

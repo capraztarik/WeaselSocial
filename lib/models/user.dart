@@ -7,6 +7,8 @@ class User {
   final String bio;
   /*final Map followers;
   final Map following;*/
+  final int followerCount;
+  final int followingCount;
 
   const User(
       {this.username,
@@ -17,5 +19,7 @@ class User {
         this.bio,
         /*this.followers,
         this.following*/
+        this.followerCount,
+        this.followingCount
       });
 }

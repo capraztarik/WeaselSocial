@@ -19,7 +19,12 @@ class NormalBottomNavBarState extends State<NormalBottomNavBar> {
     SearchPage(),
     Feed(),
     Notifications(),
-    ProfilePage(userId: "mesutozil"),
+    ProfilePage(username:"mesutozil",
+        photoUrl:"https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
+        displayName: "M10",
+        bio:"Player for Fenerbahce",
+        followerCount: 980,
+        followingCount: 450),
   ];
 
   void onTabTapped(int index) {

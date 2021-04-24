@@ -1,31 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:weasel_social_media_app/Utilities/demo_values.dart';
-import 'package:weasel_social_media_app/widgets/post.dart';
-import 'package:weasel_social_media_app/widgets/user.dart';
+import 'package:weasel_social_media_app/widgets/post_view.dart';
+import '../models/user.dart';
 import 'package:weasel_social_media_app/main.dart';
 import 'dart:async';
 //import 'edit_profile_page.dart';
 //import 'models/user.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({this.userId});
+  const ProfilePage({
+    this.username,
+    this.photoUrl,
+    this.displayName,
+    this.bio,
+    /*this.followers,
+        this.following*/
+    this.followerCount,
+    this.followingCount});
 
-  final String userId;
+  final String username;
+  final String photoUrl;
+  final String displayName;
+  final String bio;
+  /*final Map followers;
+  final Map following;*/
+  final int followerCount;
+  final int followingCount;
 
-  _ProfilePage createState() => _ProfilePage(this.userId);
+  _ProfilePage createState() => _ProfilePage(
+      username:this.username,
+      photoUrl:this.photoUrl,
+      displayName:this.displayName,
+      bio:this.bio,
+      /*this.followers,
+        this.following*/
+      followerCount:this.followerCount,
+      followingCount:this.followingCount);
 }
 
 class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin<ProfilePage> {
-  final String profileId;
   //String currentUserId
-  String view = "grid"; // default view
   bool isFollowing = false;
   bool followButtonClicked = false;
   int postCount = 0;
-  List<Image> userPosts=[];
-  int followerCount = 850;
-  int followingCount = 273;
-  _ProfilePage(this.profileId);
+  List<Image> userPosts=[]; //should be filled by backend
+
+  final String username;
+  final String photoUrl;
+  final String displayName;
+  final String bio;
+  /*final Map followers;
+  final Map following;*/
+  final int followerCount;
+  final int followingCount;
+  _ProfilePage(
+      {
+    this.username,
+    this.photoUrl,
+    this.displayName,
+    this.bio,
+    this.followerCount,
+    this.followingCount,
+});
 
   @override
   void initState() {
@@ -34,7 +70,7 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
     postCount=userPosts.length;
   }
 
-  _getUserPosts() async {
+  _getUserPosts() async {//should get UserPosts from backend
     print("Starting getting Posts");
     Image temp=Image.network("https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg");
 
@@ -58,14 +94,16 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
   Widget build(BuildContext context) {
     super.build(context);
     User user = User(
-      username:"mesutoezil",
-        id:"mesutozil",
-        photoUrl:"https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
+      username:this.username,
+        id:this.username,
+        photoUrl:this.photoUrl,
         email:"tc@gmail.com",
-        displayName:"M10 ",
-        bio:"Player for Fenerbahçe.",
+        displayName:this.displayName,
+        bio:this.bio,
         /*followers"",
         following"",*/
+      followerCount: this.followerCount,
+      followingCount: this.followingCount,
       );
 
     Column buildStatColumn(String label, int number) {
@@ -92,7 +130,7 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
 
     Container buildProfileFollowButton(User user) {
       // viewing your own profile - should show edit button
-      if (user.id == profileId) {
+      if (user.username == this.username) {//should be current_user.username ==this.username but we cant do current user right now.
         return buildFollowButton(
           text: "Edit Profile",
           backgroundcolor: Colors.white,
@@ -135,7 +173,7 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
       appBar: AppBar(
         backgroundColor: Colors.white30,
         title: Text(
-          this.profileId,
+          this.username,
           style: TextStyle(
             color: Colors.black87,
           ),
@@ -150,7 +188,7 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
             children: <Widget>[
                 CircleAvatar(
                     radius: 55.0,
-                    backgroundImage: NetworkImage(user.photoUrl),
+                    backgroundImage: NetworkImage(this.photoUrl),
                     backgroundColor: Colors.grey,
                   ),
               Expanded(
@@ -183,13 +221,13 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(top: 12.0,left:10.0),
                 child: Text(
-                  user.displayName,
+                  this.displayName,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 )),
             Container(
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.only(top: 1.0,left:10.0),
-              child: Text(user.bio),
+              child: Text(this.bio),
             ),
             Expanded(
               child:GridView.count(

@@ -1,14 +1,28 @@
-//import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weasel_social_media_app/Screens/welcome.dart';
 import '../Utilities/color.dart';
+import 'package:after_layout/after_layout.dart';
 
 class Onboard extends StatefulWidget {
   @override
   _Onboard createState() => _Onboard();
 }
 
-class _Onboard extends State<Onboard> {
+class _Onboard extends State<Onboard> with AfterLayoutMixin<Onboard> {
+  Future checkFirstSeen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool _seen = (prefs.getBool('seen') ?? false);
+    if (_seen) {
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => Welcome()));
+    } else {
+      await prefs.setBool('seen', true);
+    }
+  }
+
+  void afterFirstLayout(BuildContext context) => checkFirstSeen();
+
   int pageIndex = 0;
   bool _visible = false;
   List<String> titles = [
@@ -23,7 +37,7 @@ class _Onboard extends State<Onboard> {
   ];
 
   void _onIntroEnd(context) {
-    Navigator.of(context).push(
+    Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => Welcome()),
     );
   }

@@ -1,9 +1,7 @@
-//import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:weasel_social_media_app/Utilities/color.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
-//import 'package:google_fonts/google_fonts.dart';
 
 class Login extends StatefulWidget {
   @override

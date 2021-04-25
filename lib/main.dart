@@ -10,9 +10,19 @@ import 'Screens/notifications.dart';
 import 'Screens/profile.dart';
 import 'Screens/edit_profile.dart';
 
-void main() => runApp(MaterialApp(
-      home: Welcome(),
-      initialRoute: '/onboard',
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Onboard(),
+      //initialRoute: '/onboard',
       debugShowCheckedModeBanner: false,
       routes: {
         '/onboard': (context) => Onboard(),
@@ -26,4 +36,6 @@ void main() => runApp(MaterialApp(
         '/edit_profile': (context) => EditProfile(),
         '/notifications': (context) => Notifications(),
       },
-    ));
+    );
+  }
+}

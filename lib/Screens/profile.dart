@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:weasel_social_media_app/Utilities/demo_values.dart';
 import 'package:weasel_social_media_app/widgets/post_view.dart';
 import '../models/user.dart';
-import 'package:weasel_social_media_app/main.dart';
-import 'dart:async';
-//import 'edit_profile_page.dart';
-//import 'models/user.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({
-    this.username,
-    this.photoUrl,
-    this.displayName,
-    this.bio,
-    /*this.followers,
+  const ProfilePage(
+      {this.username,
+      this.photoUrl,
+      this.displayName,
+      this.bio,
+      /*this.followers,
         this.following*/
-    this.followerCount,
-    this.followingCount});
+      this.followerCount,
+      this.followingCount});
 
   final String username;
   final String photoUrl;
@@ -28,22 +23,23 @@ class ProfilePage extends StatefulWidget {
   final int followingCount;
 
   _ProfilePage createState() => _ProfilePage(
-      username:this.username,
-      photoUrl:this.photoUrl,
-      displayName:this.displayName,
-      bio:this.bio,
+      username: this.username,
+      photoUrl: this.photoUrl,
+      displayName: this.displayName,
+      bio: this.bio,
       /*this.followers,
         this.following*/
-      followerCount:this.followerCount,
-      followingCount:this.followingCount);
+      followerCount: this.followerCount,
+      followingCount: this.followingCount);
 }
 
-class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin<ProfilePage> {
+class _ProfilePage extends State<ProfilePage>
+    with AutomaticKeepAliveClientMixin<ProfilePage> {
   //String currentUserId
   bool isFollowing = false;
   bool followButtonClicked = false;
   int postCount = 0;
-  List<Image> userPosts=[]; //should be filled by backend
+  List<Image> userPosts = []; //should be filled by backend
 
   final String username;
   final String photoUrl;
@@ -53,26 +49,27 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
   final Map following;*/
   final int followerCount;
   final int followingCount;
-  _ProfilePage(
-      {
+  _ProfilePage({
     this.username,
     this.photoUrl,
     this.displayName,
     this.bio,
     this.followerCount,
     this.followingCount,
-});
+  });
 
   @override
   void initState() {
     super.initState();
     this._getUserPosts();
-    postCount=userPosts.length;
+    postCount = userPosts.length;
   }
 
-  _getUserPosts() async {//should get UserPosts from backend
+  _getUserPosts() async {
+    //should get UserPosts from backend
     print("Starting getting Posts");
-    Image temp=Image.network("https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg");
+    Image temp = Image.network(
+        "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg");
 
     for (int x = 0; x < 13; x++) {
       userPosts.add(temp);
@@ -80,31 +77,34 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
 
     setState(() {});
   }
-  editProfile(){
-    Navigator.pushNamed(context, '/edit_profile');
-  }
-  unfollowUser(){
 
+  editProfile() {
+    Navigator.pushNamed(context, '/edit_profile', arguments: {
+      "username": this.username,
+      "displayname": this.displayName,
+      "bio": this.bio,
+      "picture": this.photoUrl
+    });
   }
-  followUser(){
 
-  }
+  unfollowUser() {}
+  followUser() {}
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     User user = User(
-      username:this.username,
-        id:this.username,
-        photoUrl:this.photoUrl,
-        email:"tc@gmail.com",
-        displayName:this.displayName,
-        bio:this.bio,
-        /*followers"",
+      username: this.username,
+      id: this.username,
+      photoUrl: this.photoUrl,
+      email: "tc@gmail.com",
+      displayName: this.displayName,
+      bio: this.bio,
+      /*followers"",
         following"",*/
       followerCount: this.followerCount,
       followingCount: this.followingCount,
-      );
+    );
 
     Column buildStatColumn(String label, int number) {
       return Column(
@@ -130,7 +130,8 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
 
     Container buildProfileFollowButton(User user) {
       // viewing your own profile - should show edit button
-      if (user.username == this.username) {//should be current_user.username ==this.username but we cant do current user right now.
+      if (user.username == this.username) {
+        //should be current_user.username ==this.username but we cant do current user right now.
         return buildFollowButton(
           text: "Edit Profile",
           backgroundcolor: Colors.white,
@@ -183,14 +184,13 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height:24),
-            Row(
-            children: <Widget>[
-                CircleAvatar(
-                    radius: 55.0,
-                    backgroundImage: NetworkImage(this.photoUrl),
-                    backgroundColor: Colors.grey,
-                  ),
+            SizedBox(height: 24),
+            Row(children: <Widget>[
+              CircleAvatar(
+                radius: 55.0,
+                backgroundImage: NetworkImage(this.photoUrl),
+                backgroundColor: Colors.grey,
+              ),
               Expanded(
                 flex: 1,
                 child: Column(
@@ -199,57 +199,57 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        SizedBox(width:12),
+                        SizedBox(width: 12),
                         buildStatColumn("posts", postCount),
-                        buildStatColumn("followers",followerCount),
+                        buildStatColumn("followers", followerCount),
                         buildStatColumn("following", followingCount),
                       ],
                     ),
                     Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          SizedBox(width:12),
+                          SizedBox(width: 12),
                           buildProfileFollowButton(user)
                         ]),
                   ],
                 ),
               )
-            ]
-            ),
+            ]),
             Container(
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(top: 12.0,left:10.0),
+                padding: const EdgeInsets.only(top: 12.0, left: 10.0),
                 child: Text(
                   this.displayName,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 )),
             Container(
               alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(top: 1.0,left:10.0),
+              padding: const EdgeInsets.only(top: 1.0, left: 10.0),
               child: Text(this.bio),
             ),
             Expanded(
-              child:GridView.count(
+              child: GridView.count(
                 crossAxisCount: 3,
                 crossAxisSpacing: 1.5,
                 mainAxisSpacing: 0.10,
                 shrinkWrap: true,
                 children: userPosts,
-                ),
-
               ),
-          ]
-      ),
+            ),
+          ]),
     );
-
   }
 
   // state would kept when switching pages
   @override
   bool get wantKeepAlive => true;
 
-  Container buildFollowButton({String text, Color backgroundcolor, Color textColor, MaterialColor borderColor, function}) {
+  Container buildFollowButton(
+      {String text,
+      Color backgroundcolor,
+      Color textColor,
+      MaterialColor borderColor,
+      function}) {
     return Container(
       padding: EdgeInsets.only(top: 2.0),
       child: TextButton(
@@ -261,8 +261,8 @@ class _ProfilePage extends State<ProfilePage> with AutomaticKeepAliveClientMixin
                 borderRadius: BorderRadius.circular(5.0)),
             alignment: Alignment.center,
             child: Text(text,
-                style: TextStyle(
-                    color: textColor, fontWeight: FontWeight.bold)),
+                style:
+                    TextStyle(color: textColor, fontWeight: FontWeight.bold)),
             width: 250.0,
             height: 27.0,
           )),
@@ -292,11 +292,9 @@ class ImageTile extends StatelessWidget {
                   child: imagePost,
                 ),
               ],
-            )
-        ),
+            )),
       );
-    })
-    );
+    }));
   }
 
   Widget build(BuildContext context) {

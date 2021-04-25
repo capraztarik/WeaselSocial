@@ -20,8 +20,6 @@ class _SearchPageState extends State<SearchPage> {
 
     //Save the searchText to SharedPref so that next time you can use them as recent searches.
     await _saveToRecentSearches(searchText);
-
-    //Do something with searchText. Note: This is not a result.
   }
 
   Future<List<String>> _getRecentSearchesLike(String query) async {
@@ -160,7 +158,10 @@ class _SearchPageState extends State<SearchPage> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.search),
+            icon: Icon(
+              Icons.search,
+              color: Colors.black87,
+            ),
             onPressed: _showSearch,
           ),
         ],

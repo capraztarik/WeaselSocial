@@ -1,291 +1,109 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-
-var followerList = [
-  {
-    "id": "1",
-    "name": "Abidin Gokcekaya",
-  },
-  {
-    "id": "2",
-    "name": "Mert Kolabas",
-  },
-  {
-    "id": "1",
-    "name": "Sabanciuniv",
-  },
-  {
-    "id": "1",
-    "name": "Hamilton",
-  },
-  {
-    "id": "1",
-    "name": "vettel",
-  },
-  {
-    "id": "1",
-    "name": "istanbulpark",
-  },
-];
-
-var likesList = [
-  {
-    "id": "1",
-    "name": "Abidin Gokcekaya",
-  },
-  {
-    "id": "2",
-    "name": "Mert Kolabas",
-  },
-  {
-    "id": "1",
-    "name": "Sabanciuniv",
-  },
-  {
-    "id": "1",
-    "name": "Hamilton",
-  },
-  {
-    "id": "1",
-    "name": "vettel",
-  },
-  {
-    "id": "1",
-    "name": "istanbulpark",
-  },
-];
-
-var commentList = [
-  {
-    "id": "1",
-    "name": "Abidin Gokcekaya",
-  },
-  {
-    "id": "2",
-    "name": "Mert Kolabas",
-  },
-  {
-    "id": "1",
-    "name": "Sabanciuniv",
-  },
-  {
-    "id": "1",
-    "name": "Hamilton",
-  },
-  {
-    "id": "1",
-    "name": "vettel",
-  },
-  {
-    "id": "1",
-    "name": "istanbulpark",
-  },
-];
-
-
+import 'package:weasel_social_media_app/widgets/notification_view.dart';
+import 'package:weasel_social_media_app/models/notification.dart';
 
 class Notifications extends StatefulWidget {
   @override
   _NotificationsState createState() => _NotificationsState();
 }
 
-class _NotificationsState extends State<Notifications> {
+class _NotificationsState extends State<Notifications> with AutomaticKeepAliveClientMixin<Notifications> {
+  List<NotificationCard> notificationCardList = [];//views that we generated.
+  List<notification_info> notificationList =[];//info taken from backend
+
+  void initState() {
+    super.initState();
+    this._getNotifications();
+  }
+
   @override
-  Widget build (buildContext) {
+  bool get wantKeepAlive => true;
+
+  _generateNotifications(List <notification_info>notificationList) {/* TODO Generates notifCards(view) with information taken from backend*/
+    int index=0;
+    while(index<notificationList.length){
+      NotificationCard temp = NotificationCard(
+        username: notificationList[index].username,
+        photoUrl: notificationList[index].photoUrl,
+        notificationType: notificationList[index].notificationType,
+        profilePhotoUrl:notificationList[index].profilePhotoUrl,
+      );
+      notificationCardList.add(temp);
+      index++;
+    }
+  }
+  buildNotifications() { /*This creates notif view from list of notif card views*/
+    if (notificationCardList != null) {
+      return ListView(
+        children: notificationCardList,
+      );
+    } else {
+      return Container(
+          alignment: FractionalOffset.center,
+          child: CircularProgressIndicator());
+    }
+  }
+  _getNotifications()async { /*TODO this would get notifs info from backend then give it to generate list*/
+    notification_info temp=notification_info(
+        username:"mbappe",
+        photoUrl:
+        "https://www.yenicaggazetesi.com.tr/d/other/esgxywducae-yho.jpg",
+        profilePhotoUrl:
+        "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
+        notificationType:1
+    );
+    notification_info temp2=notification_info(
+        username:"mbappe",
+        photoUrl:
+        "https://www.yenicaggazetesi.com.tr/d/other/esgxywducae-yho.jpg",
+        profilePhotoUrl:
+        "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
+        notificationType:2
+    );
+    notification_info temp3=notification_info(
+        username:"mbappe",
+        photoUrl:
+        "https://www.yenicaggazetesi.com.tr/d/other/esgxywducae-yho.jpg",
+        profilePhotoUrl:
+        "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
+        notificationType:0
+    );
+    for(int x=0;x<3;x++){
+      notificationList.add(temp);
+      notificationList.add(temp2);
+      notificationList.add(temp3);
+    }
+    _generateNotifications(notificationList);
+    setState(() {});
+  }
+
+  @override
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white30,
-          title: Text(
-            "Weasel",
-            style: TextStyle(
-              color: Colors.black87,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white30,
+        title: Text(
+          "Weasel",
+          style: TextStyle(
+            color: Colors.black87,
           ),
         ),
-        body: ListView(
-            children:[
-              SizedBox(height: 5,),
-              Container(
-                child:Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Follow Requests',
-                    style: TextStyle(fontSize: 22,
-                      color:Colors.black,
-                      fontWeight: FontWeight.w400
-                  ),
-                    textAlign: TextAlign.start,
-                  ),
-                ),
-                height: 40,
-                width: 10,
-              ),
-              ListView.builder
-                (
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: followerList.length,
-                  padding: const EdgeInsets.all(8),
-                  itemBuilder: (buildContext, int index) {
-                    return Column(
-                      children: [
-                        Container(
-                            height: 50,
-                            color: Colors.white10,
-                            padding: const EdgeInsets.all(2),
-                            margin: EdgeInsets.all(2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.account_circle,
-                                  color: Colors.blueAccent,
-                                  size: 30.0,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                  height: 5,
-                                ),
-
-                                Expanded(
-                                  child: Text(followerList[index]["name"] + " " + "started following you.",
-                                    overflow: TextOverflow.clip, style: TextStyle(fontSize: 20),
-                                  ),
-                                flex: 1,
-                                ),
-                              ],
-                            )
-                        ),
-                      ],
-                    );
-                  }
-              ),
-              Divider(
-                color: Colors.grey,
-                height: 20.0,
-                thickness: 2.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  child:Text(
-                  'Likes',
-                  style: TextStyle(fontSize: 22,
-                      color:Colors.black,
-                      fontWeight: FontWeight.w400
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-                  height: 20,
-                  width: 20,
-                ),
-              ),
-              ListView.builder
-                (
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: likesList.length,
-                  padding: const EdgeInsets.all(8),
-                  itemBuilder: (buildContext, int index) {
-                    return Column(
-                      children: [
-                        Container(
-                            height: 50,
-                            color: Colors.white10,
-                            padding: const EdgeInsets.all(2),
-                            margin: EdgeInsets.all(2),
-                            child:Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.thumb_up,
-                                  color: Colors.red,
-                                  size: 30.0,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                  height: 5,
-                                ),
-
-                                Expanded(
-                                  child: Text(likesList[index]["name"] + " " + "liked you.",overflow: TextOverflow.clip, style: TextStyle(fontSize: 20),
-
-                                  ),
-                                flex: 1,
-                                ),
-                              ],
-                            )
-                        ),
-                      ],
-                    );
-                  }
-              ),
-              Divider(
-                color: Colors.grey,
-                height: 20.0,
-                thickness: 2.0,
-              ),
-              SizedBox(height: 5,),
-              Container(
-                child:Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Comments',
-                    style: TextStyle(fontSize: 22,
-                        color:Colors.black,
-                        fontWeight: FontWeight.w400
-                    ),
-                    textAlign: TextAlign.start,
-                  ),
-                ),
-                height: 40,
-                width: 10,
-              ),
-              ListView.builder
-                (
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: commentList.length,
-                  padding: const EdgeInsets.all(8),
-                  itemBuilder: (buildContext, int index) {
-                    return Column(
-                      children: [
-                        Container(
-                            height: 50,
-                            color: Colors.white10,
-                            padding: const EdgeInsets.all(2),
-                            margin: EdgeInsets.all(2),
-                            child:Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.add_comment,
-                                  color: Colors.grey,
-                                  size: 30.0,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                  height: 5,
-                                ),
-                                Expanded(
-                                  child: Text(commentList[index]["name"] + " " + "commented on your post.",overflow: TextOverflow.clip,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                    flex:1),
-                              ],
-                            )
-                        ),
-                      ],
-                    );
-                  }
-              ),
-
-            ]
-        )
+      ),
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: buildNotifications(),
+      ),
     );
+  }
+
+  Future<Null> _refresh() async {
+    await _getNotifications();
+
+    setState(() {});
+
+    return;
   }
 }

@@ -13,11 +13,11 @@ class NotificationCard extends StatefulWidget {
   final int notificationType;
 
   _NotificationCard createState() => _NotificationCard(
-    username:this.username,
-    photoUrl:this.photoUrl,
-    profilePhotoUrl:this.profilePhotoUrl,
-    notificationType:this.notificationType,
-  );
+        username: this.username,
+        photoUrl: this.photoUrl,
+        profilePhotoUrl: this.profilePhotoUrl,
+        notificationType: this.notificationType,
+      );
 }
 
 class _NotificationCard extends State<NotificationCard> {
@@ -58,20 +58,23 @@ class _NotificationCard extends State<NotificationCard> {
         });
   }
 
-
-  buildNotification({String ownerId, int notificationType , String profilePhotoUrl,String photoUrl}) {
+  buildNotification(
+      {String ownerId,
+      int notificationType,
+      String profilePhotoUrl,
+      String photoUrl}) {
     String notification;
     if (ownerId == null) {
       return Text("owner error");
     }
     if (notificationType == 0) {
-      notification="followed you.";
+      notification = "followed you.";
     }
     if (notificationType == 1) {
-      notification="liked your post.";
+      notification = "liked your post.";
     }
     if (notificationType == 2) {
-      notification="comment on your post.";
+      notification = "comment on your post.";
     }
     return ListTile(
         leading: CircleAvatar(
@@ -91,12 +94,11 @@ class _NotificationCard extends State<NotificationCard> {
           onTap: () {
             //openPost();
           },
-        )
-    );
+        ));
   }
 
   Widget build(BuildContext context) {
-    final TextStyle titleTheme = Theme.of(context).textTheme.bodyText1;
+    //final TextStyle titleTheme = Theme.of(context).textTheme.bodyText1;
     //final TextStyle captionTheme = Theme.of(context).textTheme.bodyText2;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -106,8 +108,8 @@ class _NotificationCard extends State<NotificationCard> {
             notificationType: this.notificationType,
             profilePhotoUrl: this.profilePhotoUrl,
             photoUrl: this.photoUrl),
-          ],
-        );
+      ],
+    );
   }
 
   void goToPost() {}

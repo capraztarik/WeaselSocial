@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
@@ -10,7 +11,28 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  void initState() {
+    super.initState();
+    _setCurrentScreen();
+  }
+
+  Future<void> _setLogEvent(String name, String action) async {
+    await FirebaseAnalytics()
+        .logEvent(name: name, parameters: <String, dynamic>{
+      'action': action,
+    });
+    print('Custom event log succeeded');
+  }
+
+  Future<void> _setCurrentScreen() async {
+    await FirebaseAnalytics().setCurrentScreen(
+      screenName: 'Search Page',
+    );
+    print('setCurrentScreen succeeded');
+  }
+
   Future<void> _showSearch() async {
+    _setLogEvent("Search Page", "Search initiated.");
     final searchText = await showSearch<String>(
       context: context,
       delegate: SearchWithSuggestionDelegate(

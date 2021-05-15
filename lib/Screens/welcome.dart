@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
@@ -10,6 +11,26 @@ class Welcome extends StatefulWidget {
 }
 
 class _WelcomeState extends State<Welcome> {
+  void initState() {
+    super.initState();
+    _setCurrentScreen();
+  }
+
+  Future<void> _setLogEvent(String name, String action) async {
+    await FirebaseAnalytics()
+        .logEvent(name: name, parameters: <String, dynamic>{
+      'action': action,
+    });
+    print('Custom event log succeeded');
+  }
+
+  Future<void> _setCurrentScreen() async {
+    await FirebaseAnalytics().setCurrentScreen(
+      screenName: 'Welcome Page',
+    );
+    print('setCurrentScreen succeeded');
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
         body: Stack(
@@ -41,6 +62,8 @@ class _WelcomeState extends State<Welcome> {
                     icon: Icons.arrow_forward_ios_rounded,
                     elevation: 5,
                     onPressed: () {
+                      _setLogEvent(
+                          "Welcome", "Sign in button tapped on welcome view.");
                       Navigator.pushNamed(context, '/login');
                     },
                     backgroundColor: AppColors.buttonColor,
@@ -56,6 +79,8 @@ class _WelcomeState extends State<Welcome> {
                       fontSize: 16,
                       backgroundColor: Colors.brown[600],
                       onPressed: () {
+                        _setLogEvent("Welcome",
+                            "Sign up button tapped on welcome view.");
                         Navigator.pushNamed(context, '/sign_up');
                       },
                     )),

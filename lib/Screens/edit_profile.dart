@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
 
@@ -11,6 +12,27 @@ class _EditProfile extends State<EditProfile> {
   String displayname;
   String bio;
   String picture;
+
+  Future<void> _setLogEvent(String name, String action) async {
+    await FirebaseAnalytics()
+        .logEvent(name: name, parameters: <String, dynamic>{
+      'action': action,
+    });
+    print('Custom event log succeeded');
+  }
+
+  Future<void> _setCurrentScreen() async {
+    await FirebaseAnalytics().setCurrentScreen(
+      screenName: 'Profile Edit Page',
+    );
+    print('setCurrentScreen succeeded');
+  }
+
+  @override
+  void initState() {
+    _setCurrentScreen();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +170,7 @@ class _EditProfile extends State<EditProfile> {
               child: OutlinedButton(
                 onPressed: () {
                   // TODO push new values to database
+                  _setLogEvent("Profile Edit", "Submit button pressed.");
                 },
                 child: Text(
                   'Submit Changes',

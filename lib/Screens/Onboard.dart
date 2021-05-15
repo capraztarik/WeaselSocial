@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weasel_social_media_app/Screens/welcome.dart';
@@ -18,7 +19,24 @@ class _Onboard extends State<Onboard> with AfterLayoutMixin<Onboard> {
           .pushReplacement(MaterialPageRoute(builder: (context) => Welcome()));
     } else {
       await prefs.setBool('seen', true);
+      _setCurrentScreen();
+      _setLogEvent("Walkthrough", "App opened for first time.");
     }
+  }
+
+  Future<void> _setLogEvent(String name, String action) async {
+    await FirebaseAnalytics()
+        .logEvent(name: name, parameters: <String, dynamic>{
+      'action': action,
+    });
+    print('Custom event log succeeded');
+  }
+
+  Future<void> _setCurrentScreen() async {
+    await FirebaseAnalytics().setCurrentScreen(
+      screenName: 'Walkthrough Page',
+    );
+    print('setCurrentScreen succeeded');
   }
 
   void afterFirstLayout(BuildContext context) => checkFirstSeen();

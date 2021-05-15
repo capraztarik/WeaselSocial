@@ -1,5 +1,7 @@
 //import 'dart:convert';
 //import 'package:email_validator/email_validator.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:email_validator/email_validator.dart';
@@ -19,6 +21,13 @@ class _SignUpState extends State<SignUp> {
   String pass2;
   String userName;
   final _formKey = GlobalKey<FormState>();
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _setCurrentScreen();
+  }
 
   Future<void> showAlertDialog(String title, String message) async {
     return showDialog<void>(
@@ -44,6 +53,44 @@ class _SignUpState extends State<SignUp> {
             ],
           );
         });
+  }
+
+  Future<void> _setLogEvent(String name, String action) async {
+    await FirebaseAnalytics()
+        .logEvent(name: name, parameters: <String, dynamic>{
+      'action': action,
+    });
+    print('Custom event log succeeded');
+  }
+
+  Future<void> _setCurrentScreen() async {
+    await FirebaseAnalytics().setCurrentScreen(
+      screenName: 'Signup Page',
+    );
+    print('setCurrentScreen succeeded');
+  }
+
+  Future<void> signupUser() async {
+    try {
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+          email: mail, password: pass);
+
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+      _setLogEvent("Sign up", "Successful sign up.");
+
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/navigator', (Route<dynamic> route) => false);
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      print(e.toString());
+      if (e.code == 'email-already-in-use') {
+        showAlertDialog("Error", 'This email is already in use');
+      } else if (e.code == 'weak-password') {
+        showAlertDialog("Error",
+            'Weak password, add uppercase, lowercase, digit, special character, emoji, etc.');
+      }
+    }
   }
 
   Widget build(BuildContext context) {
@@ -224,22 +271,26 @@ class _SignUpState extends State<SignUp> {
                             if (_formKey.currentState.validate()) {
                               _formKey.currentState.save();
 
+                              _setLogEvent("Sign up", "Signup button pressed.");
+
                               if (pass != pass2) {
                                 showAlertDialog(
                                     "Error", 'Passwords must match');
                               } else {
-                                Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    '/navigator',
-                                    (Route<dynamic> route) => false);
+                                signupUser();
                               }
-                              //
-                              setState(() {
-                                attemptCount += 1;
-                              });
+                              attemptCount += 1;
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Logging in')));
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                duration: Duration(seconds: 25),
+                                content: Row(
+                                  children: <Widget>[
+                                    CircularProgressIndicator(),
+                                    Text("  Signing Up...")
+                                  ],
+                                ),
+                              ));
                             }
                           },
                           backgroundColor: AppColors.buttonColor,

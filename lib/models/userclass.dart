@@ -1,4 +1,4 @@
-class User {
+class UserClass {
   final String email;
   final String id;
   final String photoUrl;
@@ -10,16 +10,15 @@ class User {
   final int followerCount;
   final int followingCount;
 
-  const User(
+  const UserClass(
       {this.username,
-        this.id,
-        this.photoUrl,
-        this.email,
-        this.displayName,
-        this.bio,
-        /*this.followers,
+      this.id,
+      this.photoUrl,
+      this.email,
+      this.displayName,
+      this.bio,
+      /*this.followers,
         this.following*/
-        this.followerCount,
-        this.followingCount
-      });
+      this.followerCount,
+      this.followingCount});
 }

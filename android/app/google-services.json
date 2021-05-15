@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "511935409830",
+    "project_id": "weaselsocial",
+    "storage_bucket": "weaselsocial.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:511935409830:android:d5609ea1cf3fe56ea34e67",
+        "android_client_info": {
+          "package_name": "com.example.weasel_social_media_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "511935409830-fj5muh1n3gc2ajkhg9kjonuqp4ufcaes.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxMD0RElXYP6B3jJ7ng8-aPwNpQuGt-Oo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "511935409830-fj5muh1n3gc2ajkhg9kjonuqp4ufcaes.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

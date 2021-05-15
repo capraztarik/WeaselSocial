@@ -1,16 +1,23 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:weasel_social_media_app/Screens/Search.dart';
-import 'package:weasel_social_media_app/Screens/sign_up.dart';
-import 'package:weasel_social_media_app/Screens/welcome.dart';
-import 'package:weasel_social_media_app/Screens/Onboard.dart';
 import 'Screens/Navigation.dart';
+import 'Screens/Onboard.dart';
+import 'Screens/Search.dart';
 import 'Screens/feed.dart';
 import 'Screens/login.dart';
 import 'Screens/notifications.dart';
 import 'Screens/profile.dart';
 import 'Screens/edit_profile.dart';
+import 'Screens/sign_up.dart';
+import 'Screens/welcome.dart';
+import 'welcomeNoFirebase.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -18,10 +25,49 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool _initialized = false;
+  bool _error = false;
+
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
+
+  // Define an async function to initialize FlutterFire
+  void initializeFlutterFire() async {
+    try {
+      // Wait for Firebase to initialize and set `_initialized` state to true
+      await Firebase.initializeApp();
+      setState(() {
+        _initialized = true;
+      });
+    } catch (e) {
+      // Set `_error` state to true if Firebase initialization fails
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    initializeFlutterFire();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_error) {
+      return WelcomeViewNoFB();
+    }
+
+    // Show a loader until FlutterFire is initialized
+    if (!_initialized) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return MaterialApp(
       home: Onboard(),
+      navigatorObservers: <NavigatorObserver>[observer],
       //initialRoute: '/onboard',
       debugShowCheckedModeBanner: false,
       routes: {

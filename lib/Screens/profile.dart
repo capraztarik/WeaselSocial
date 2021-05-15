@@ -1,6 +1,8 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:weasel_social_media_app/widgets/post_view.dart';
-import '../models/user.dart';
+import '../models/userclass.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage(
@@ -62,12 +64,38 @@ class _ProfilePage extends State<ProfilePage>
   void initState() {
     super.initState();
     this._getUserPosts();
-    postCount = userPosts.length;
+    postCount = userPosts.length ?? 0;
+    _setCurrentScreen();
+  }
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future<void> signOut() async {
+    _setLogEvent("Profile", "User Signed out.");
+    await auth.signOut();
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/welcome', (Route<dynamic> route) => false);
+  }
+
+  Future<void> _setLogEvent(String name, String action) async {
+    await FirebaseAnalytics()
+        .logEvent(name: name, parameters: <String, dynamic>{
+      'action': action,
+    });
+    print('Custom event log succeeded');
+  }
+
+  Future<void> _setCurrentScreen() async {
+    await FirebaseAnalytics().setCurrentScreen(
+      screenName: 'Profile Page',
+    );
+    print('setCurrentScreen succeeded');
   }
 
   _getUserPosts() async {
     //should get UserPosts from backend
     print("Starting getting Posts");
+    _setLogEvent("Profile", "Profile posts fetched.");
     Image temp = Image.network(
         "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg");
 
@@ -93,7 +121,7 @@ class _ProfilePage extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    User user = User(
+    UserClass tempUser = UserClass(
       username: this.username,
       id: this.username,
       photoUrl: this.photoUrl,
@@ -128,9 +156,9 @@ class _ProfilePage extends State<ProfilePage>
       );
     }
 
-    Container buildProfileFollowButton(User user) {
+    Container buildProfileFollowButton(UserClass user) {
       // viewing your own profile - should show edit button
-      if (user.username == this.username) {
+      if (tempUser.username == this.username) {
         //should be current_user.username ==this.username but we cant do current user right now.
         return buildFollowButton(
           text: "Edit Profile",
@@ -172,6 +200,14 @@ class _ProfilePage extends State<ProfilePage>
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              icon: Icon(Icons.logout),
+              color: Colors.black87,
+              onPressed: () {
+                signOut();
+              })
+        ],
         backgroundColor: Colors.white30,
         title: Text(
           this.username,
@@ -209,7 +245,7 @@ class _ProfilePage extends State<ProfilePage>
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           SizedBox(width: 12),
-                          buildProfileFollowButton(user)
+                          buildProfileFollowButton(tempUser)
                         ]),
                   ],
                 ),

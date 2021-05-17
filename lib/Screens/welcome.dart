@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:weasel_social_media_app/Utilities/color.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
+import 'package:weasel_social_media_app/widgets/google_sign_in.dart';
 
 class Welcome extends StatefulWidget {
   @override
@@ -48,7 +49,7 @@ class _WelcomeState extends State<Welcome> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.all(40.0),
+                  padding: const EdgeInsets.all(15.0),
                   child: Text(
                     'Weasel',
                     style: kHeadingTextStyle,
@@ -57,6 +58,7 @@ class _WelcomeState extends State<Welcome> {
                 Padding(
                   padding: const EdgeInsets.only(top: 370.0),
                   child: SignInButtonBuilder(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
                     text: "Login",
                     fontSize: 16,
                     icon: Icons.arrow_forward_ios_rounded,
@@ -70,8 +72,9 @@ class _WelcomeState extends State<Welcome> {
                   ),
                 ),
                 Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
+                    padding: const EdgeInsets.only(top: 9.0),
                     child: SignInButtonBuilder(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
                       //Buttons.Email,
                       icon: Icons.mail,
                       text: "Sign Up with Email",
@@ -84,6 +87,10 @@ class _WelcomeState extends State<Welcome> {
                         Navigator.pushNamed(context, '/sign_up');
                       },
                     )),
+                Padding(
+                  padding: const EdgeInsets.only(top: 9),
+                  child: GoogleSignInButton(),
+                ),
               ]),
         )
       ],

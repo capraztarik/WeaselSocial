@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:weasel_social_media_app/widgets/post_view.dart';
 import '../models/userclass.dart';
 
@@ -69,10 +70,12 @@ class _ProfilePage extends State<ProfilePage>
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   Future<void> signOut() async {
     _setLogEvent("Profile", "User Signed out.");
     await auth.signOut();
+    await googleSignIn.signOut();
     Navigator.pushNamedAndRemoveUntil(
         context, '/welcome', (Route<dynamic> route) => false);
   }

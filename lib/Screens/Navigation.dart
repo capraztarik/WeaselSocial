@@ -37,7 +37,7 @@ class NormalBottomNavBarState extends State<NormalBottomNavBar> {
   }
 
   void onTabTapped(int index) {
-    _setLogEvent("Navigation Bar", "A button tapped on navigation bar.");
+    _setLogEvent("Navigation_Bar", "A button tapped on navigation bar.");
     setState(() {
       _currentIndex = index;
     });

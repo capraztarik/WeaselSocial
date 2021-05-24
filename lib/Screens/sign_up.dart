@@ -2,6 +2,7 @@
 //import 'package:email_validator/email_validator.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:email_validator/email_validator.dart';
@@ -61,7 +62,7 @@ class _SignUpState extends State<SignUp> {
       'action': action,
     });
     print('Custom event log succeeded');
-  }
+  } 
 
   Future<void> _setCurrentScreen() async {
     await FirebaseAnalytics().setCurrentScreen(
@@ -74,6 +75,14 @@ class _SignUpState extends State<SignUp> {
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
           email: mail, password: pass);
+      /*TODO create user variables after auth.
+      firestore_userList*/
+      //FirebaseFirestore firestore = FirebaseFirestore.instance;
+      CollectionReference users = FirebaseFirestore.instance.collection('users');
+      users.add({
+        'uid': auth.currentUser.uid,
+        'username': userName,
+      }).then((value) => print("User Added")).catchError((error) => print("Failed to add user: $error"));
 
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
 

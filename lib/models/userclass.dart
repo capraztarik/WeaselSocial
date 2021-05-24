@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 class UserClass {
   final String email;
   final String id;
@@ -5,10 +8,10 @@ class UserClass {
   final String username;
   final String displayName;
   final String bio;
-  /*final Map followers;
-  final Map following;*/
   final int followerCount;
   final int followingCount;
+  /*final Map followers;
+  final Map following;*/
 
   const UserClass(
       {this.username,
@@ -21,4 +24,17 @@ class UserClass {
         this.following*/
       this.followerCount,
       this.followingCount});
+
+  factory UserClass.fromDocument(DocumentSnapshot document) {
+    return UserClass(
+      username: document['username'],
+      id: document.id,
+      photoUrl: document['photoUrl'],
+      email: document['email'],
+      displayName: document['displayName'],
+      bio: document['bio'],
+      /*followers: document['followers'],
+      following: document['following'],*/
+    );
+  }
 }

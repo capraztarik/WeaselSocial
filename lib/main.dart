@@ -13,6 +13,7 @@ import 'Screens/edit_profile.dart';
 import 'Screens/sign_up.dart';
 import 'Screens/welcome.dart';
 import 'welcomeNoFirebase.dart';
+import 'Screens/share_post.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,6 +82,7 @@ class _MyAppState extends State<MyApp> {
         '/profile': (context) => ProfilePage(),
         '/edit_profile': (context) => EditProfile(),
         '/notifications': (context) => Notifications(),
+        '/share_post': (context) => Uploader(),
       },
     );
   }

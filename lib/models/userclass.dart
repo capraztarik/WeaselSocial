@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserClass {
   final String email;
-  final String id;
+  final String uid;
   final String photoUrl;
   final String username;
   final String displayName;
@@ -15,7 +15,7 @@ class UserClass {
 
   const UserClass(
       {this.username,
-      this.id,
+      this.uid,
       this.photoUrl,
       this.email,
       this.displayName,
@@ -28,7 +28,7 @@ class UserClass {
   factory UserClass.fromDocument(DocumentSnapshot document) {
     return UserClass(
       username: document['username'],
-      id: document.id,
+      uid: document.id,
       photoUrl: document['photoUrl'],
       email: document['email'],
       displayName: document['displayName'],

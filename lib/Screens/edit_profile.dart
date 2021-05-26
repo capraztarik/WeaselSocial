@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
 
 class EditProfile extends StatefulWidget {
@@ -73,9 +74,16 @@ class _EditProfile extends State<EditProfile> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/feed');
+                    onPressed: () async {
+                      //Navigator.pushNamed(context, '/feed');
                       //TODO: Change Picture
+                      Navigator.of(context).pop();
+                      ImagePicker imagePicker = ImagePicker();
+                      PickedFile imageFile =
+                          await imagePicker.getImage(source: ImageSource.gallery, maxWidth: 1920, maxHeight: 1200, imageQuality: 80);
+                      setState(() {
+                        /*TODO:CHANGE FROM FİREBASE*/
+                      });
                     },
                     child: Text(
                       'Change Profile Picture',

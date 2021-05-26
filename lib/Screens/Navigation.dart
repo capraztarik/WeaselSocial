@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:weasel_social_media_app/Screens/Search.dart';
 import 'package:weasel_social_media_app/Screens/profile.dart';
+import 'package:weasel_social_media_app/Screens/share_post.dart';
 import 'feed.dart';
 import 'notifications.dart';
 
@@ -18,7 +19,7 @@ class NormalBottomNavBarState extends State<NormalBottomNavBar> {
   final List<Widget> _children = [
     Feed(),
     SearchPage(),
-    Feed(),
+    Uploader(),
     Notifications(),
     ProfilePage(
         username: "mesutozil",

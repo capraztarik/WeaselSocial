@@ -126,7 +126,7 @@ class _ProfilePage extends State<ProfilePage>
     super.build(context);
     UserClass tempUser = UserClass(
       username: this.username,
-      id: this.username,
+      uid: this.username,
       photoUrl: this.photoUrl,
       email: "tc@gmail.com",
       displayName: this.displayName,

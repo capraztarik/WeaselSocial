@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:weasel_social_media_app/Utilities/color.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
 //import 'package:http/http.dart' as http;
@@ -23,6 +24,8 @@ class _SignUpState extends State<SignUp> {
   String userName;
   final _formKey = GlobalKey<FormState>();
   FirebaseAuth auth = FirebaseAuth.instance;
+  final googleSignIn = GoogleSignIn();
+  User currentUserModel;
 
   @override
   void initState() {
@@ -75,9 +78,6 @@ class _SignUpState extends State<SignUp> {
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
           email: mail, password: pass);
-      /*TODO create user variables after auth.
-      firestore_userList*/
-      //FirebaseFirestore firestore = FirebaseFirestore.instance;
       CollectionReference users = FirebaseFirestore.instance.collection('users');
       users.add({
         'uid': auth.currentUser.uid,

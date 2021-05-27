@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
+import 'package:weasel_social_media_app/main.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -35,6 +37,7 @@ class _EditProfile extends State<EditProfile> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
     final Map<String, Object> rcvdData =
@@ -44,6 +47,15 @@ class _EditProfile extends State<EditProfile> {
     bio = rcvdData["bio"];
     picture = rcvdData["picture"];
 
+    void applyChanges() {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserModel.uid)
+          .update({
+        "displayName": displayname,
+        "bio": bio,
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -83,6 +95,7 @@ class _EditProfile extends State<EditProfile> {
                           await imagePicker.getImage(source: ImageSource.gallery, maxWidth: 1920, maxHeight: 1200, imageQuality: 80);
                       setState(() {
                         /*TODO:CHANGE FROM FİREBASE*/
+                        applyChanges();
                       });
                     },
                     child: Text(
@@ -192,3 +205,4 @@ class _EditProfile extends State<EditProfile> {
     );
   }
 }
+

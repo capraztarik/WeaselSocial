@@ -9,6 +9,8 @@ import 'package:email_validator/email_validator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:weasel_social_media_app/Utilities/color.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
+import 'package:weasel_social_media_app/main.dart';
+
 //import 'package:http/http.dart' as http;
 
 class SignUp extends StatefulWidget {
@@ -23,9 +25,8 @@ class _SignUpState extends State<SignUp> {
   String pass2;
   String userName;
   final _formKey = GlobalKey<FormState>();
-  FirebaseAuth auth = FirebaseAuth.instance;
-  final googleSignIn = GoogleSignIn();
-  User currentUserModel;
+
+
 
   @override
   void initState() {
@@ -78,7 +79,9 @@ class _SignUpState extends State<SignUp> {
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
           email: mail, password: pass);
+
       CollectionReference users = FirebaseFirestore.instance.collection('users');
+      currentUserModel=auth.currentUser;
       users.add({
         'uid': auth.currentUser.uid,
         'username': userName,

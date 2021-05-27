@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'Screens/Navigation.dart';
 import 'Screens/Onboard.dart';
 import 'Screens/Search.dart';
@@ -14,6 +17,11 @@ import 'Screens/sign_up.dart';
 import 'Screens/welcome.dart';
 import 'welcomeNoFirebase.dart';
 import 'Screens/share_post.dart';
+
+final googleSignIn = GoogleSignIn();
+User currentUserModel;
+FirebaseAuth auth = FirebaseAuth.instance;
+final usersReference = FirebaseFirestore.instance.collection('users');
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

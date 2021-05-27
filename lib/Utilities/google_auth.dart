@@ -34,13 +34,7 @@ class Authentication {
       try {
         final UserCredential userCredential =
             await auth.signInWithCredential(credential);
-
         user = userCredential.user;
-        CollectionReference users = FirebaseFirestore.instance.collection('users');
-        users.add({
-          'uid': auth.currentUser.uid,
-          'username': googleSignIn.currentUser.id,
-        }).then((value) => print("User Added")).catchError((error) => print("Failed to add user: $error"));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
           ScaffoldMessenger.of(context).showSnackBar(

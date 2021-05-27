@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:weasel_social_media_app/main.dart';
 import 'package:weasel_social_media_app/widgets/post_view.dart';
 import '../models/userclass.dart';
 
@@ -11,8 +12,6 @@ class ProfilePage extends StatefulWidget {
       this.photoUrl,
       this.displayName,
       this.bio,
-      /*this.followers,
-        this.following*/
       this.followerCount,
       this.followingCount});
 
@@ -20,8 +19,6 @@ class ProfilePage extends StatefulWidget {
   final String photoUrl;
   final String displayName;
   final String bio;
-  /*final Map followers;
-  final Map following;*/
   final int followerCount;
   final int followingCount;
 
@@ -124,18 +121,6 @@ class _ProfilePage extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    UserClass tempUser = UserClass(
-      username: this.username,
-      uid: this.username,
-      photoUrl: this.photoUrl,
-      email: "tc@gmail.com",
-      displayName: this.displayName,
-      bio: this.bio,
-      /*followers"",
-        following"",*/
-      followerCount: this.followerCount,
-      followingCount: this.followingCount,
-    );
 
     Column buildStatColumn(String label, int number) {
       return Column(
@@ -161,7 +146,7 @@ class _ProfilePage extends State<ProfilePage>
 
     Container buildProfileFollowButton(UserClass user) {
       // viewing your own profile - should show edit button
-      if (tempUser.username == this.username) {
+      if (currentUserModel.username == this.username) {
         //should be current_user.username ==this.username but we cant do current user right now.
         return buildFollowButton(
           text: "Edit Profile",
@@ -248,7 +233,7 @@ class _ProfilePage extends State<ProfilePage>
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           SizedBox(width: 12),
-                          buildProfileFollowButton(tempUser)
+                          buildProfileFollowButton(currentUserModel)
                         ]),
                   ],
                 ),

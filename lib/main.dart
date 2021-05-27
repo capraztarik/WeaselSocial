@@ -15,11 +15,12 @@ import 'Screens/profile.dart';
 import 'Screens/edit_profile.dart';
 import 'Screens/sign_up.dart';
 import 'Screens/welcome.dart';
+import 'models/userclass.dart';
 import 'welcomeNoFirebase.dart';
 import 'Screens/share_post.dart';
 
 final googleSignIn = GoogleSignIn();
-User currentUserModel;
+UserClass currentUserModel;
 FirebaseAuth auth = FirebaseAuth.instance;
 final usersReference = FirebaseFirestore.instance.collection('users');
 

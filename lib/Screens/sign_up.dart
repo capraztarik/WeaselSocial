@@ -1,5 +1,6 @@
 //import 'dart:convert';
 //import 'package:email_validator/email_validator.dart';
+//import 'dart:html';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +11,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:weasel_social_media_app/Utilities/color.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
 import 'package:weasel_social_media_app/main.dart';
+import 'package:weasel_social_media_app/models/userclass.dart';
 
 //import 'package:http/http.dart' as http;
 
@@ -25,8 +27,6 @@ class _SignUpState extends State<SignUp> {
   String pass2;
   String userName;
   final _formKey = GlobalKey<FormState>();
-
-
 
   @override
   void initState() {
@@ -66,7 +66,7 @@ class _SignUpState extends State<SignUp> {
       'action': action,
     });
     print('Custom event log succeeded');
-  } 
+  }
 
   Future<void> _setCurrentScreen() async {
     await FirebaseAnalytics().setCurrentScreen(
@@ -80,12 +80,29 @@ class _SignUpState extends State<SignUp> {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
           email: mail, password: pass);
 
-      CollectionReference users = FirebaseFirestore.instance.collection('users');
-      currentUserModel=auth.currentUser;
-      users.add({
-        'uid': auth.currentUser.uid,
-        'username': userName,
-      }).then((value) => print("User Added")).catchError((error) => print("Failed to add user: $error"));
+      //DocumentSnapshot userRecord = await usersReference.doc(user.id).get();
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('users');
+      //currentUserModel = auth.currentUser;
+      users
+          .doc(auth.currentUser.uid)
+          .set({
+            "uid": auth.currentUser.uid,
+            'username': userName,
+            'bio': "Default bio",
+            "name": userName,
+            "profileState": "public",
+            "profile_picture":
+                "https://firebasestorage.googleapis.com/v0/b/weaselsocial.appspot.com/o/Splash.png?alt=media&token=ced17135-e65c-47fa-8cd3-3570130b1309",
+            "followers": {},
+            "following": {},
+          })
+          .then((value) => print("User Added"))
+          .catchError((error) => print("Failed to add user: $error"));
+
+      DocumentSnapshot userRecord =
+          await usersReference.doc(auth.currentUser.uid).get();
+      currentUserModel = UserClass.fromDocument(userRecord);
 
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
 

@@ -1,9 +1,16 @@
+
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
 import 'package:weasel_social_media_app/main.dart';
+import 'package:path/path.dart' as Path;
+import 'package:weasel_social_media_app/models/userclass.dart';
+
 
 class EditProfile extends StatefulWidget {
   @override
@@ -11,10 +18,16 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfile extends State<EditProfile> {
-  String username;
-  String displayname;
-  String bio;
-  String picture;
+  String username=currentUserModel.username;
+  String displayname=currentUserModel.displayName;
+  String bio=currentUserModel.bio;
+  String picture=currentUserModel.photoUrl;
+  bool isPrivate=currentUserModel.isPrivate;
+  ImagePicker imagePicker = ImagePicker();
+  File _image;
+  PickedFile imageFile;
+  String _uploadedFileURL;
+  final editKey = GlobalKey<FormState>();
 
   Future<void> _setLogEvent(String name, String action) async {
     await FirebaseAnalytics()
@@ -31,6 +44,39 @@ class _EditProfile extends State<EditProfile> {
     print('setCurrentScreen succeeded');
   }
 
+   uploadFile()  {
+    Reference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('profiles/${Path.basename(imageFile.path)}}');
+
+    UploadTask uploadTask = storageReference.putFile(_image);
+    uploadTask.whenComplete(() => print('File Uploaded'));
+    storageReference.getDownloadURL().then((fileURL) {
+      setState(() {
+        _uploadedFileURL = fileURL;
+      });
+    });
+  }
+
+  applyChanges() async {
+
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUserModel.uid)
+        .update({
+      "username": username,
+      "name": displayname,
+      "bio": bio,
+      "isPrivate":isPrivate,
+      "profile_picture":_uploadedFileURL,
+    });
+
+    DocumentSnapshot userRecord =
+    await usersReference.doc(auth.currentUser.uid).get();
+    currentUserModel = UserClass.fromDocument(userRecord);
+  }
+
   @override
   void initState() {
     _setCurrentScreen();
@@ -40,22 +86,6 @@ class _EditProfile extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, Object> rcvdData =
-        ModalRoute.of(context).settings.arguments;
-    username = rcvdData["username"];
-    displayname = rcvdData["displayname"];
-    bio = rcvdData["bio"];
-    picture = rcvdData["picture"];
-
-    void applyChanges() {
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUserModel.uid)
-          .update({
-        "displayName": displayname,
-        "bio": bio,
-      });
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -68,7 +98,9 @@ class _EditProfile extends State<EditProfile> {
         backgroundColor: Colors.grey[400],
       ),
       body: SingleChildScrollView(
-        child: Column(
+        child:Form(
+          key:editKey,
+          child: Column(
           children: <Widget>[
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               Padding(
@@ -89,13 +121,10 @@ class _EditProfile extends State<EditProfile> {
                     onPressed: () async {
                       //Navigator.pushNamed(context, '/feed');
                       //TODO: Change Picture
-                      Navigator.of(context).pop();
-                      ImagePicker imagePicker = ImagePicker();
-                      PickedFile imageFile =
+                      imageFile =
                           await imagePicker.getImage(source: ImageSource.gallery, maxWidth: 1920, maxHeight: 1200, imageQuality: 80);
                       setState(() {
-                        /*TODO:CHANGE FROM FİREBASE*/
-                        applyChanges();
+                        _image = File(imageFile.path) ;
                       });
                     },
                     child: Text(
@@ -106,19 +135,19 @@ class _EditProfile extends State<EditProfile> {
                 )
               ],
             ),
-            Divider(color: Colors.grey, height: 40, thickness: 1),
+
             Row(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(18.0),
                   child: Text(
-                    'Name:',
+                    'Display Name:',
                     style: kTextStyle,
                   ),
                 ),
                 Flexible(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(60.00, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(40.00, 0, 0, 0),
                     child: TextFormField(
                       onSaved: (String value) {
                         displayname = value;
@@ -132,7 +161,28 @@ class _EditProfile extends State<EditProfile> {
                 ),
               ],
             ),
-            Divider(color: Colors.grey, height: 1, thickness: 1, indent: 150),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Text(
+                    'Private Profile:',
+                    style: kTextStyle,
+                  ),
+                ),
+                SizedBox(width:40),
+                Switch(
+                  value: isPrivate,
+                  onChanged: (value) {
+                    setState(() {
+                      isPrivate = value;
+                    });
+                  },
+                  activeTrackColor: Colors.greenAccent,
+                  activeColor: Colors.green,
+                ),
+              ],
+            ),
             Row(
               children: [
                 Padding(
@@ -144,7 +194,7 @@ class _EditProfile extends State<EditProfile> {
                 ),
                 Flexible(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(25.00, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(40.00, 0, 0, 0),
                     child: TextFormField(
                       onSaved: (String value) {
                         username = value;
@@ -158,7 +208,7 @@ class _EditProfile extends State<EditProfile> {
                 ),
               ],
             ),
-            Divider(color: Colors.grey, height: 1, thickness: 1, indent: 150),
+
             Row(
               children: [
                 Padding(
@@ -170,7 +220,7 @@ class _EditProfile extends State<EditProfile> {
                 ),
                 Flexible(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(28.00, 0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(40.00, 0, 0, 0),
                     child: TextFormField(
                       onSaved: (String value) {
                         bio = value;
@@ -192,6 +242,14 @@ class _EditProfile extends State<EditProfile> {
                 onPressed: () {
                   // TODO push new values to database
                   _setLogEvent("Profile Edit", "Submit button pressed.");
+                if (editKey.currentState.validate()&&username!=""&&displayname!="") {
+                    editKey.currentState.save();
+                    uploadFile();
+                    applyChanges();
+                setState(() {
+
+                });}
+                  Navigator.of(context).pop();
                 },
                 child: Text(
                   'Submit Changes',
@@ -201,6 +259,7 @@ class _EditProfile extends State<EditProfile> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

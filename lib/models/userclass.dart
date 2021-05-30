@@ -8,6 +8,7 @@ class UserClass {
   final String bio;
   final Map followers;
   final Map following;
+  final bool isPrivate;
 
   const UserClass({
     this.username,
@@ -17,6 +18,7 @@ class UserClass {
     this.bio,
     this.followers,
     this.following,
+    this.isPrivate,
   });
 
   factory UserClass.fromDocument(DocumentSnapshot document) {
@@ -28,6 +30,7 @@ class UserClass {
       bio: document['bio'],
       followers: document['followers'],
       following: document['following'],
+      isPrivate: document['isPrivate']
     );
   }
 }

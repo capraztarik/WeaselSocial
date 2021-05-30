@@ -49,7 +49,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                       'username': auth.currentUser.email,
                       'bio': "Default bio",
                       "name": auth.currentUser.email,
-                      "profileState": "public",
+                      "isPrivate": false,
                       "profile_picture":
                           "https://firebasestorage.googleapis.com/v0/b/weaselsocial.appspot.com/o/Splash.png?alt=media&token=ced17135-e65c-47fa-8cd3-3570130b1309",
                       "followers": {},

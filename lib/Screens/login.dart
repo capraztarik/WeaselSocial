@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:weasel_social_media_app/Utilities/color.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
+import 'package:weasel_social_media_app/models/userclass.dart';
+
+import '../main.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -82,6 +86,9 @@ class _LoginState extends State<Login> {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
 
       _setLogEvent("Login", "Successful login.");
+      DocumentSnapshot userRecord =
+      await usersReference.doc(auth.currentUser.uid).get();
+      currentUserModel = UserClass.fromDocument(userRecord);
 
       Navigator.pushNamedAndRemoveUntil(
           context, '/navigator', (Route<dynamic> route) => false);

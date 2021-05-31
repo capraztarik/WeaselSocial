@@ -23,7 +23,7 @@ class NormalBottomNavBarState extends State<NormalBottomNavBar> {
 
   final List<Widget> _children = [
     Feed(),
-    SearchPage(),
+    SearchPage(query: " ", pageState: "initial"),
     Uploader(),
     Notifications(),
     ProfilePage(

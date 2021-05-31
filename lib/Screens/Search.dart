@@ -1,19 +1,72 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
+import 'package:weasel_social_media_app/models/post_info.dart';
+import 'package:weasel_social_media_app/models/userclass.dart';
 import '../Utilities/custom_search_delegates.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class SearchPage extends StatefulWidget {
+  final String query;
+  final String pageState;
+
+  SearchPage({this.query, this.pageState});
   @override
   _SearchPageState createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
+  List<UserClass> userList = [];
+  List postList = [
+    {
+      "id": 1,
+      "name": "abidin",
+      "profilepicture":
+          "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+      "postpicture":
+          "https://www.eea.europa.eu/themes/biodiversity/state-of-nature-in-the-eu/state-of-nature-2020-subtopic/image_large"
+    },
+    {
+      "id": 1,
+      "name": "abidin",
+      "profilepicture":
+          "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+      "postpicture":
+          "https://www.eea.europa.eu/themes/biodiversity/state-of-nature-in-the-eu/state-of-nature-2020-subtopic/image_large"
+    },
+    {
+      "id": 1,
+      "name": "abidin",
+      "profilepicture":
+          "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+      "postpicture":
+          "https://www.eea.europa.eu/themes/biodiversity/state-of-nature-in-the-eu/state-of-nature-2020-subtopic/image_large"
+    },
+    {
+      "id": 1,
+      "name": "abidin",
+      "profilepicture":
+          "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+      "postpicture":
+          "https://www.eea.europa.eu/themes/biodiversity/state-of-nature-in-the-eu/state-of-nature-2020-subtopic/image_large"
+    },
+    {
+      "id": 1,
+      "name": "abidin",
+      "profilepicture":
+          "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
+      "postpicture":
+          "https://www.eea.europa.eu/themes/biodiversity/state-of-nature-in-the-eu/state-of-nature-2020-subtopic/image_large"
+    }
+  ];
+  Future<QuerySnapshot> userDocs;
+
   void initState() {
     super.initState();
     _setCurrentScreen();
+    print(widget.query);
   }
 
   Future<void> _setLogEvent(String name, String action) async {
@@ -31,139 +84,14 @@ class _SearchPageState extends State<SearchPage> {
     print('setCurrentScreen succeeded');
   }
 
-  Future<void> _showSearch() async {
-    _setLogEvent("Search Page", "Search initiated.");
-    final searchText = await showSearch<String>(
-      context: context,
-      delegate: SearchWithSuggestionDelegate(
-        onSearchChanged: _getRecentSearchesLike,
-      ),
-    );
-
-    //Save the searchText to SharedPref so that next time you can use them as recent searches.
-    await _saveToRecentSearches(searchText);
-  }
-
-  Future<List<String>> _getRecentSearchesLike(String query) async {
-    final pref = await SharedPreferences.getInstance();
-    final allSearches = pref.getStringList("recentSearches");
-    return allSearches.where((search) => search.startsWith(query)).toList();
-  }
-
-  Future<void> _saveToRecentSearches(String searchText) async {
-    if (searchText == null) return; //Should not be null
-    final pref = await SharedPreferences.getInstance();
-
-    //Use `Set` to avoid duplication of recentSearches
-    Set<String> allSearches =
-        pref.getStringList("recentSearches")?.toSet() ?? {};
-
-    //Place it at first in the set
-    allSearches = {searchText, ...allSearches};
-    pref.setStringList("recentSearches", allSearches.toList());
-  }
-
-  var searchList = [
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-    {
-      "id": "2",
-      "name": "Mert Kolabas",
-      "picture":
-          "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    },
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "picture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-    },
-  ];
-
-  var postList = [
-    {
-      "id": "1",
-      "name": "Abidin Gokcekaya",
-      "profilepicture":
-          "https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
-      "postpicture":
-          "https://lh3.googleusercontent.com/S91cavnhzA402I4Db58tuo83mFdRG5pvCXq3CPSJN4tzYvqBx4h1zwkCWoZ4zxJO371IkwrfUiXZAHTeHA6_kTKAQjs=w640-h400-e365-rj-sc0x00ffffff"
-    },
-    {
-      "id": "2",
-      "name": "Mert Kolabas",
-      "profilepicture":
-          "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-      "postpicture":
-          "https://travelplanner.app/wp-content/uploads/2021/02/1200px-Shaqi_jrvej.jpg"
-    }
-  ];
   int _currentState = 0;
   bool boolState = false;
 
   Widget swapTile() {
     return AnimatedCrossFade(
       duration: const Duration(milliseconds: 500),
-      firstChild: usersearchview(searchList),
-      secondChild: postsearchview(postList),
+      firstChild: userSearchView(widget.query),
+      secondChild: postSearchView(postList),
       crossFadeState:
           boolState ? CrossFadeState.showSecond : CrossFadeState.showFirst,
     );
@@ -172,22 +100,34 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white30,
-        title: Text(
-          "Weasel",
-          style: TextStyle(color: Colors.black87),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: Colors.black87,
+      appBar: (widget.pageState != "search")
+          ? AppBar(
+              backgroundColor: Colors.white30,
+              title: Text(
+                "Weasel",
+                style: TextStyle(color: Colors.black87),
+              ),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.black87,
+                  ),
+                  onPressed: () {
+                    _setLogEvent("Search", "Search button pressed.");
+                    showSearch(
+                      context: context,
+                      delegate: SearchWithSuggestionDelegate(),
+                    );
+                  },
+                ),
+              ],
+            )
+          : AppBar(
+              automaticallyImplyLeading: false,
+              toolbarHeight: 0,
+              elevation: 2,
             ),
-            onPressed: _showSearch,
-          ),
-        ],
-      ),
       body: ListView(
         children: [
           Center(
@@ -203,7 +143,7 @@ class _SearchPageState extends State<SearchPage> {
                 activeFgColor: Colors.black87,
                 inactiveBgColor: Colors.white,
                 inactiveFgColor: Colors.black87,
-                labels: ['Username', 'Location', 'Post Content'],
+                labels: ['Username', 'Post Content'],
                 onToggle: (index) {
                   print('switched to: $index');
                   setState(() {
@@ -224,21 +164,34 @@ class _SearchPageState extends State<SearchPage> {
   }
 }
 
-Widget usersearchview(var searchList) {
+Widget userSearchView(String query) {
   final ScrollController controller = new ScrollController();
-  return ListView.builder(
-    shrinkWrap: true,
-    scrollDirection: Axis.vertical,
-    controller: controller,
-    itemCount: searchList.length,
-    itemBuilder: (context, i) {
-      return userSearchUI(
-          searchList[i]["id"], searchList[i]["name"], searchList[i]["picture"]);
-    },
-  );
+  return StreamBuilder<QuerySnapshot>(
+      stream: (query != " " && query != null)
+          ? FirebaseFirestore.instance
+              .collection('users')
+              .where('username', isGreaterThanOrEqualTo: query)
+              .where('username', isLessThan: query + 'z')
+              .snapshots()
+          : FirebaseFirestore.instance.collection("users").snapshots(),
+      builder: (context, snapshot) {
+        return (snapshot.connectionState == ConnectionState.waiting)
+            ? Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                controller: controller,
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, i) {
+                  DocumentSnapshot data = snapshot.data.docs[i];
+                  return userSearchUI(
+                      data["uid"], data["username"], data["profile_picture"]);
+                },
+              );
+      });
 }
 
-Widget postsearchview(var postList) {
+Widget postSearchView(var postList) {
   final ScrollController controller = new ScrollController();
   return ListView.builder(
     //physics: AlwaysScrollableScrollPhysics(),

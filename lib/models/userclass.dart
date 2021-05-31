@@ -21,16 +21,29 @@ class UserClass {
     this.isPrivate,
   });
 
+  List<UserClass> fromQuerySnapshot(QuerySnapshot querySnapshot) {
+    return querySnapshot.docs.map((snapshot) {
+      final Map<String, dynamic> dataMap = snapshot.data();
+
+      return UserClass(
+          username: dataMap['username'],
+          bio: dataMap['bio'],
+          photoUrl: dataMap['profile_picture'],
+          uid: dataMap['uid'],
+          displayName: dataMap['name'],
+          isPrivate: dataMap['isPrivate']);
+    }).toList();
+  }
+
   factory UserClass.fromDocument(DocumentSnapshot document) {
     return UserClass(
-      username: document['username'],
-      uid: document.id,
-      photoUrl: document['profile_picture'],
-      displayName: document['name'],
-      bio: document['bio'],
-      followers: document['followers'],
-      following: document['following'],
-      isPrivate: document['isPrivate']
-    );
+        username: document['username'],
+        uid: document.id,
+        photoUrl: document['profile_picture'],
+        displayName: document['name'],
+        bio: document['bio'],
+        followers: document['followers'],
+        following: document['following'],
+        isPrivate: document['isPrivate']);
   }
 }

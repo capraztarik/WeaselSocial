@@ -308,7 +308,7 @@ class _SignUpState extends State<SignUp> {
                               } else {
                                 signupUser();
                               }
-                              attemptCount += 1;
+                              attemptCount = attemptCount + 1;
 
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(

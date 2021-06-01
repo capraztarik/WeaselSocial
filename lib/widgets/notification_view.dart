@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weasel_social_media_app/Screens/profile.dart';
 
 class NotificationCard extends StatefulWidget {
   const NotificationCard({
@@ -6,17 +7,20 @@ class NotificationCard extends StatefulWidget {
     this.photoUrl,
     this.profilePhotoUrl,
     this.notificationType,
+    this.uid,
   });
   final String photoUrl;
   final String profilePhotoUrl;
   final String username;
   final int notificationType;
+  final String uid;
 
   _NotificationCard createState() => _NotificationCard(
         username: this.username,
         photoUrl: this.photoUrl,
         profilePhotoUrl: this.profilePhotoUrl,
         notificationType: this.notificationType,
+         uid: this.uid,
       );
 }
 
@@ -24,6 +28,7 @@ class _NotificationCard extends State<NotificationCard> {
   final String photoUrl;
   final String profilePhotoUrl;
   final String username;
+  final String uid;
   final int notificationType;
   int likeCount;
   bool followed = false;
@@ -33,6 +38,7 @@ class _NotificationCard extends State<NotificationCard> {
     this.photoUrl,
     this.profilePhotoUrl,
     this.notificationType,
+    this.uid,
   });
 
   GestureDetector buildFollowIcon() {
@@ -85,7 +91,12 @@ class _NotificationCard extends State<NotificationCard> {
         title: GestureDetector(
           child: Text(ownerId),
           onTap: () {
-            //openProfile(context, ownerId);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(uid: this.uid),
+              ),
+            );
           },
         ),
         subtitle: Text(notification),
@@ -113,7 +124,7 @@ class _NotificationCard extends State<NotificationCard> {
   }
 
   void goToPost() {}
-  void goToProfile() {}
+
   void acceptFollowRequest() {}
   void declineFollowRequest() {}
 }

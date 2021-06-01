@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:weasel_social_media_app/Screens/profile.dart';
 
 class PostCard extends StatefulWidget {
   const PostCard({
     this.username,
+    this.uid,
     this.location,
     this.caption,
     this.mediaUrl,
@@ -13,6 +15,7 @@ class PostCard extends StatefulWidget {
   factory PostCard.fromJSON(Map data) {
     return PostCard(
       username: data['username'],
+      uid: data['uid'],
       location: data['location'],
       caption: data['caption'],
       mediaUrl: data['mediaUrl'],
@@ -20,6 +23,7 @@ class PostCard extends StatefulWidget {
     );
   }
   final String username;
+  final String uid;
   final String location;
   final String caption;
   final String mediaUrl;
@@ -29,6 +33,7 @@ class PostCard extends StatefulWidget {
         username: this.username,
         location: this.location,
         caption: this.caption,
+        uid:this.uid,
         mediaUrl: this.mediaUrl,
         profilePhotoUrl: this.profilePhotoUrl,
         likeCount: this.likeCount,
@@ -40,6 +45,7 @@ class _PostCard extends State<PostCard> {
   final String location;
   final String caption;
   final String mediaUrl;
+  final String uid;
   final String profilePhotoUrl;
   int likeCount;
   bool liked = false;
@@ -49,6 +55,7 @@ class _PostCard extends State<PostCard> {
     this.location,
     this.caption,
     this.likeCount,
+    this.uid,
     this.mediaUrl,
     this.profilePhotoUrl,
   });
@@ -103,25 +110,34 @@ class _PostCard extends State<PostCard> {
     if (ownerId == null) {
       return Text("owner error");
     }
-    return ListTile(
-        leading: CircleAvatar(
-          //backgroundImage: AssetImage(DemoValues.userImage),
-          backgroundImage: NetworkImage(profilePhotoUrl),
-          backgroundColor: Colors.grey,
-        ),
-        title: GestureDetector(
-          child: Text(ownerId),
-          onTap: () {
-            //openProfile(context, ownerId);
+
+    return GestureDetector(
+            child:ListTile(
+              leading: CircleAvatar(
+                //backgroundImage: AssetImage(DemoValues.userImage),
+                backgroundImage: NetworkImage(profilePhotoUrl),
+                backgroundColor: Colors.grey,
+              ),
+                title:  Text(ownerId),
+
+                subtitle: Text(location),
+                trailing: GestureDetector(
+                  child: Icon(Icons.more_vert),
+                onTap: () {
+                  //openPostSettings();
+                },
+          )
+            ),
+        onTap: () {
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(uid: uid),
+                ),
+              );
           },
-        ),
-        subtitle: Text(location),
-        trailing: GestureDetector(
-          child: Icon(Icons.more_vert),
-          onTap: () {
-            //openPostSettings();
-          },
-        ));
+    );
   }
 
   Widget build(BuildContext context) {

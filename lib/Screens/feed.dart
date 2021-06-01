@@ -88,6 +88,7 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
       profilePhotoUrl:
           "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
       likeCount: 59,
+      uid:"USM7K6scz1ZlrC0kfMg6VWNj0Xc2"
     );
     PostInfo temp2 = PostInfo(
       username: "neymar",
@@ -96,6 +97,7 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
       photoUrl: "https://www.trtspor.com.tr/resimler/366000/366896.jpg",
       profilePhotoUrl: "https://www.trtspor.com.tr/resimler/366000/366896.jpg",
       likeCount: 88,
+        uid:"USM7K6scz1ZlrC0kfMg6VWNj0Xc2"
     );
     List<PostInfo> postList = [];
     for (int x = 0; x < 3; x++) {
@@ -116,6 +118,7 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
       PostCard temp = PostCard(
         username: postList[index].username,
         location: postList[index].location,
+        uid:postList[index].uid,
         caption: postList[index].caption,
         mediaUrl: postList[index].photoUrl,
         profilePhotoUrl: postList[index].profilePhotoUrl,

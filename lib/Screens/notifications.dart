@@ -47,6 +47,7 @@ class _NotificationsState extends State<Notifications>
         photoUrl: notificationList[index].photoUrl,
         notificationType: notificationList[index].notificationType,
         profilePhotoUrl: notificationList[index].profilePhotoUrl,
+        uid:notificationList[index].uid,
       );
       notificationCardList.add(temp);
       index++;
@@ -74,21 +75,24 @@ class _NotificationsState extends State<Notifications>
             "https://www.yenicaggazetesi.com.tr/d/other/esgxywducae-yho.jpg",
         profilePhotoUrl:
             "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
-        notificationType: 1);
+        notificationType: 1,
+    uid:"USM7K6scz1ZlrC0kfMg6VWNj0Xc2",);
     notification_info temp2 = notification_info(
         username: "mbappe",
         photoUrl:
             "https://www.yenicaggazetesi.com.tr/d/other/esgxywducae-yho.jpg",
         profilePhotoUrl:
             "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
-        notificationType: 2);
+        notificationType: 2,
+      uid:"USM7K6scz1ZlrC0kfMg6VWNj0Xc2",);
     notification_info temp3 = notification_info(
         username: "mbappe",
         photoUrl:
             "https://www.yenicaggazetesi.com.tr/d/other/esgxywducae-yho.jpg",
         profilePhotoUrl:
             "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
-        notificationType: 0);
+        notificationType: 0,
+      uid:"USM7K6scz1ZlrC0kfMg6VWNj0Xc2",);
     for (int x = 0; x < 3; x++) {
       notificationList.add(temp);
       notificationList.add(temp2);

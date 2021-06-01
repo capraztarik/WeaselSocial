@@ -227,25 +227,29 @@ Widget userSearchUI(
                       ),
                     );
                   },
-                  child: Container(
-                    width: 55,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage('$imageUrl'),
-                        fit: BoxFit.fill,
+                  child: Row(
+                    children: <Widget>[
+                        Container(
+                        width: 55,
+                        height: 55,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: NetworkImage('$imageUrl'),
+                            fit: BoxFit.fill,
+                          ),
+                        ),
                       ),
+                          Padding(
+                        padding: EdgeInsets.all(5.0),
                     ),
+                          Text(
+                      '$name',
+                      style: kTextStyle,
+                    ),
+                  ]
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(5.0),
-                ),
-                Text(
-                  '$name',
-                  style: kTextStyle,
-                ),
+                )
               ],
             ),
           ),

@@ -2,13 +2,14 @@ class PostInfo {
   final String photoUrl;
   final String profilePhotoUrl;
   final String username;
+  final String uid;
   final String caption;
   final String location;
   final Map likerList;
   final int likeCount;
 
   const PostInfo(
-      {this.username,
+      {this.username, this.uid,
       this.photoUrl,
       this.profilePhotoUrl,
       this.location,

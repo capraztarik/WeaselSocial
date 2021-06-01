@@ -7,7 +7,7 @@ class UserClass {
   final String displayName;
   final String bio;
   final Map followers;
-  final Map following;
+  final Map followings;
   final bool isPrivate;
 
   const UserClass({
@@ -17,7 +17,7 @@ class UserClass {
     this.displayName,
     this.bio,
     this.followers,
-    this.following,
+    this.followings,
     this.isPrivate,
   });
 
@@ -43,7 +43,7 @@ class UserClass {
         displayName: document['name'],
         bio: document['bio'],
         followers: document['followers'],
-        following: document['following'],
+        followings: document['followings'],
         isPrivate: document['isPrivate']);
   }
 }

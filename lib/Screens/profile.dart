@@ -23,7 +23,8 @@ class _ProfilePage extends State<ProfilePage>
   int postCount = 0;
   List<Image> userPosts = []; //should be filled by backend
   UserClass currentProfile;
-
+  String profileowneruid;
+  String logineduseruid;
   @override
   void initState() {
     super.initState();
@@ -38,6 +39,8 @@ class _ProfilePage extends State<ProfilePage>
   Future<void> getUserCred() async {
     DocumentSnapshot userRecord = await usersReference.doc(widget.uid).get();
     currentProfile = UserClass.fromDocument(userRecord);
+    profileowneruid=widget.uid;
+    logineduseruid=currentUserModel.uid;
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -89,9 +92,71 @@ class _ProfilePage extends State<ProfilePage>
     });
   }
 
-  unfollowUser() {}
-  followUser() {}
+  unfollowUser() {
+    setState(() {
+      isFollowing = false;
+      followButtonClicked = true;
+    });
 
+    usersReference.doc(currentUserModel.uid).update({
+      'followings.$profileowneruid': false
+    });
+    usersReference.doc(profileowneruid).update({
+      'followers.$logineduseruid': false
+    });
+    usersReference.doc(profileowneruid).update({
+      'followers.$logineduseruid': false
+    });
+
+    /*TODO*/
+    /* delete her items from feed
+       FirebaseFirestore.instance
+        .collection("insta_a_feed")
+        .doc(profileId)
+        .collection("items")
+        .doc(currentUserId)
+        .delete();*/
+  }
+  followUser() {
+        print('following user');
+        setState(() {
+          this.isFollowing = true;
+          followButtonClicked = true;
+        });
+
+        usersReference.doc(currentUserModel.uid).update({
+          'followings.$profileowneruid': true
+        });
+        usersReference.doc(profileowneruid).update({
+          'followers.$logineduseruid': true
+        });
+
+
+        //updates activity feed
+        /*FirebaseFirestore.instance
+            .collection("insta_a_feed")
+            .doc(profileId)
+            .collection("items")
+            .doc(currentUserId)
+            .set({
+          "ownerId": profileId,
+          "username": currentUserModel.username,
+          "userId": currentUserId,
+          "type": "follow",
+          "userProfileImg": currentUserModel.photoUrl,
+          "timestamp": DateTime.now()
+        });*/
+  }
+  int _countFollowings(Map followings) {
+    int count = 0;
+    void countValues(key, value) {
+      if (value) {
+        count += 1;
+      }
+    }
+    followings.forEach(countValues);
+    return count;
+  }
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -121,7 +186,6 @@ class _ProfilePage extends State<ProfilePage>
     Container buildProfileFollowButton(UserClass user) {
       // viewing your own profile - should show edit button
       if (currentUserModel.username == currentProfile.username) {
-        //should be current_user.username ==this.username but we cant do current user right now.
         return buildFollowButton(
           text: "Edit Profile",
           backgroundcolor: Colors.white,
@@ -130,27 +194,28 @@ class _ProfilePage extends State<ProfilePage>
           function: editProfile,
         );
       }
+      else{
+          // already following user - should show unfollow button
+          if (isFollowing) {
+            return buildFollowButton(
+              text: "Unfollow",
+              backgroundcolor: Colors.white,
+              textColor: Colors.black,
+              borderColor: Colors.grey,
+              function: unfollowUser,
+            );
+          }
 
-      // already following user - should show unfollow button
-      if (isFollowing) {
-        return buildFollowButton(
-          text: "Unfollow",
-          backgroundcolor: Colors.white,
-          textColor: Colors.black,
-          borderColor: Colors.grey,
-          function: unfollowUser,
-        );
-      }
-
-      // does not follow user - should show follow button
-      if (!isFollowing) {
-        return buildFollowButton(
-          text: "Follow",
-          backgroundcolor: Colors.blue,
-          textColor: Colors.white,
-          borderColor: Colors.blue,
-          function: followUser,
-        );
+          // does not follow user - should show follow button
+          else if (!isFollowing) {
+            return buildFollowButton(
+              text: "Follow",
+              backgroundcolor: Colors.blue,
+              textColor: Colors.white,
+              borderColor: Colors.blue,
+              function: followUser,
+            );
+          }
       }
 
       return buildFollowButton(
@@ -162,104 +227,115 @@ class _ProfilePage extends State<ProfilePage>
 
     if (firstLoad) {
       return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white30,
-            centerTitle: true,
-            title: Text(
-              "TechScape",
-              style: TextStyle(
-                fontFamily: 'OpenSans',
-                fontSize: 30,
-                color: Colors.white,
-              ),
-            ),
-          ),
           body: SafeArea(
             child: Center(
                 child: Container(
                     height: 50, width: 50, child: CircularProgressIndicator())),
           ));
-    } else {
-      return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-                icon: Icon(Icons.logout),
-                color: Colors.black87,
-                onPressed: () {
-                  signOut();
-                })
-          ],
-          backgroundColor: Colors.white30,
-          title: Text(
-            currentProfile.username,
-            style: TextStyle(
-              color: Colors.black87,
-            ),
-          ),
-        ),
-        body: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: 24),
-              Row(children: <Widget>[
-                CircleAvatar(
-                  radius: 55.0,
-                  backgroundImage: NetworkImage(currentProfile.photoUrl),
-                  backgroundColor: Colors.grey,
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          SizedBox(width: 12),
-                          buildStatColumn("posts", postCount),
-                          buildStatColumn("followers",
-                              currentProfile.followers.length ?? 0),
-                          buildStatColumn("following",
-                              currentProfile.following.length ?? 0),
-                        ],
-                      ),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            SizedBox(width: 12),
-                            buildProfileFollowButton(currentUserModel)
-                          ]),
-                    ],
-                  ),
-                )
-              ]),
-              Container(
-                  alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.only(top: 12.0, left: 10.0),
-                  child: Text(
-                    currentProfile.displayName,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  )),
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(top: 1.0, left: 10.0),
-                child: Text(currentProfile.bio),
-              ),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 1.5,
-                  mainAxisSpacing: 0.10,
-                  shrinkWrap: true,
-                  children: userPosts,
-                ),
-              ),
-            ]),
-      );
     }
-  }
+
+    else {
+      return StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return Container(
+                  alignment: FractionalOffset.center,
+                  child: CircularProgressIndicator());
+
+            UserClass profileOwner = UserClass.fromDocument(snapshot.data);
+
+            if (profileOwner.followers.containsKey(currentUserModel.uid) &&
+                profileOwner.followers[currentUserModel.uid] == true &&
+                followButtonClicked == false) {
+              isFollowing = true;
+            }
+
+
+            return Scaffold(
+              appBar: AppBar(
+                actions: [
+                  IconButton(
+                      icon: Icon(Icons.logout),
+                      color: Colors.black87,
+                      onPressed: () {
+                        signOut();
+                      })
+                ],
+                backgroundColor: Colors.white30,
+                title: Text(
+                  currentProfile.username,
+                  style: TextStyle(
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+              body: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: 24),
+                    Row(children: <Widget>[
+                      CircleAvatar(
+                        radius: 55.0,
+                        backgroundImage: NetworkImage(currentProfile.photoUrl),
+                        backgroundColor: Colors.grey,
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                SizedBox(width: 12),
+                                buildStatColumn("posts", postCount),
+                                buildStatColumn("followers", _countFollowings(currentProfile.followers)),
+                                buildStatColumn("followings",_countFollowings(currentProfile.followings)),
+                              ],
+                            ),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceEvenly,
+                                children: <Widget>[
+                                  SizedBox(width: 12),
+                                  buildProfileFollowButton(currentUserModel)
+                                ]),
+                          ],
+                        ),
+                      )
+                    ]),
+                    Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(top: 12.0, left: 10.0),
+                        child: Text(
+                          currentProfile.displayName,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.only(top: 1.0, left: 10.0),
+                      child: Text(currentProfile.bio),
+                    ),
+                    Expanded(
+                      child: GridView.count(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 1.5,
+                        mainAxisSpacing: 0.10,
+                        shrinkWrap: true,
+                        children: userPosts,
+                      ),
+                    ),
+                  ]),
+            );
+          });
+    }
+    }
+
 
   // state would kept when switching pages
   @override
@@ -290,6 +366,8 @@ class _ProfilePage extends State<ProfilePage>
     );
   }
 }
+
+
 
 class ImageTile extends StatelessWidget {
   final PostCard imagePost;

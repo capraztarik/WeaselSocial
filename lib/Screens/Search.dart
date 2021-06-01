@@ -8,6 +8,8 @@ import 'package:weasel_social_media_app/models/userclass.dart';
 import '../Utilities/custom_search_delegates.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import 'profile.dart';
+
 class SearchPage extends StatefulWidget {
   final String query;
   final String pageState;
@@ -184,8 +186,8 @@ Widget userSearchView(String query) {
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, i) {
                   DocumentSnapshot data = snapshot.data.docs[i];
-                  return userSearchUI(
-                      data["uid"], data["username"], data["profile_picture"]);
+                  return userSearchUI(data["uid"], data["username"],
+                      data["profile_picture"], context);
                 },
               );
       });
@@ -206,7 +208,8 @@ Widget postSearchView(var postList) {
   );
 }
 
-Widget userSearchUI(var key, String name, String imageUrl) {
+Widget userSearchUI(
+    String key, String name, String imageUrl, BuildContext context) {
   return Container(
     child: Column(
       children: <Widget>[
@@ -216,7 +219,14 @@ Widget userSearchUI(var key, String name, String imageUrl) {
             child: Row(
               children: <Widget>[
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfilePage(uid: key),
+                      ),
+                    );
+                  },
                   child: Container(
                     width: 55,
                     height: 55,

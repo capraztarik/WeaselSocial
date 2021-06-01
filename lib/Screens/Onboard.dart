@@ -10,7 +10,17 @@ class Onboard extends StatefulWidget {
   _Onboard createState() => _Onboard();
 }
 
-class _Onboard extends State<Onboard> with AfterLayoutMixin<Onboard> {
+class _Onboard extends State<Onboard> {
+  @override
+  void initState() {
+    initialFunction().whenComplete(() => null);
+    super.initState();
+  }
+
+  Future<void> initialFunction() async {
+    await checkFirstSeen();
+  }
+
   Future checkFirstSeen() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool _seen = (prefs.getBool('seen') ?? false);
@@ -38,8 +48,6 @@ class _Onboard extends State<Onboard> with AfterLayoutMixin<Onboard> {
     );
     print('setCurrentScreen succeeded');
   }
-
-  void afterFirstLayout(BuildContext context) => checkFirstSeen();
 
   int pageIndex = 0;
   bool _visible = false;

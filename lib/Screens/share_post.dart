@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:async';
 import 'dart:io';
+import '../main.dart';
 
 File file;
 
@@ -66,20 +67,20 @@ class _Uploader extends State<Uploader> {
   }
 
   void postImage() {
-    /*setState(() {
+    setState(() {
       uploading = true;
     });
     uploadImage(file).then((String data) {
       postToFireStore(
-          mediaUrl: data,
-          description: descriptionController.text,
+        mediaUrl: data,
+        description: descriptionController.text,
       );
     }).then((_) {
       setState(() {
         file = null;
         uploading = false;
       });
-    });*/
+    });
   }
 }
 
@@ -154,8 +155,7 @@ class _PostFormState extends State<PostForm> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             CircleAvatar(
-              backgroundImage: NetworkImage(
-                  "https://www.trtspor.com.tr/resimler/366000/366896.jpg"), /*todo currentUserModel.photoUrl*/
+              backgroundImage: NetworkImage(currentUserModel.photoUrl),
             ),
             Container(
               width: 250.0,
@@ -180,8 +180,7 @@ class _PostFormState extends State<PostForm> {
                       fit: BoxFit.fill,
                       alignment: FractionalOffset.topCenter,
                       image: file == null
-                          ? NetworkImage(
-                              "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/OOjs_UI_icon_add.svg/768px-OOjs_UI_icon_add.svg.png")
+                          ? AssetImage("assets/images/add_photo.png")
                           : FileImage(file),
                     )),
                   ),
@@ -190,19 +189,6 @@ class _PostFormState extends State<PostForm> {
             ),
           ],
         ),
-        Divider(),
-        ListTile(
-          leading: Icon(Icons.pin_drop),
-          title: Container(
-            width: 250.0,
-            child: TextField(
-              controller: widget.locationController,
-              decoration: InputDecoration(
-                  hintText: "Where was this photo taken?",
-                  border: InputBorder.none),
-            ),
-          ),
-        )
       ],
     );
   }
@@ -210,27 +196,26 @@ class _PostFormState extends State<PostForm> {
 
 Future<String> uploadImage(var imageFile) async {
   var uuid = Uuid().v1();
-  Reference ref = FirebaseStorage.instance.ref().child("post_$uuid.jpg");
+  Reference ref = FirebaseStorage.instance.ref().child("posts/post_$uuid.jpg");
   UploadTask uploadTask = ref.putFile(imageFile);
 
   String downloadUrl = await (await uploadTask).ref.getDownloadURL();
   return downloadUrl;
 }
 
-/*void postToFireStore(
+void postToFireStore(
     {String mediaUrl, String location, String description}) async {
-  var reference = FirebaseFirestore.instance.collection('insta_posts');
+  var reference = FirebaseFirestore.instance.collection('posts');
 
   reference.add({
     "username": currentUserModel.username,
-    "location": location,
     "likes": {},
     "mediaUrl": mediaUrl,
     "description": description,
-    "ownerId": googleSignIn.currentUser.id,
+    "ownerId": currentUserModel.uid,
     "timestamp": DateTime.now(),
   }).then((DocumentReference doc) {
     String docId = doc.id;
     reference.doc(docId).update({"postId": docId});
   });
-}*/
+}

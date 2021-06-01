@@ -42,21 +42,26 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                 CollectionReference users =
                     FirebaseFirestore.instance.collection('users');
                 //currentUserModel = auth.currentUser;
-                users
-                    .doc(auth.currentUser.uid)
-                    .set({
-                      "uid": auth.currentUser.uid,
-                      'username': auth.currentUser.email,
-                      'bio': "Default bio",
-                      "name": auth.currentUser.email,
-                      "isPrivate": false,
-                      "profile_picture":
-                          "https://firebasestorage.googleapis.com/v0/b/weaselsocial.appspot.com/o/Splash.png?alt=media&token=ced17135-e65c-47fa-8cd3-3570130b1309",
-                      "followers": {},
-                      "following": {},
-                    })
-                    .then((value) => print("User Added"))
-                    .catchError((error) => print("Failed to add user: $error"));
+                //FirebaseDatabase.instance.reference().child('users').where('User_id', 1508)
+                if (users.where("uid", isEqualTo: auth.currentUser.uid) ==
+                    null) {
+                  users
+                      .doc(auth.currentUser.uid)
+                      .set({
+                        "uid": auth.currentUser.uid,
+                        'username': auth.currentUser.email,
+                        'bio': "Default bio",
+                        "name": auth.currentUser.email,
+                        "isPrivate": false,
+                        "profile_picture":
+                            "https://firebasestorage.googleapis.com/v0/b/weaselsocial.appspot.com/o/Splash.png?alt=media&token=ced17135-e65c-47fa-8cd3-3570130b1309",
+                        "followers": {},
+                        "following": {},
+                      })
+                      .then((value) => print("User Added"))
+                      .catchError(
+                          (error) => print("Failed to add user: $error"));
+                }
 
                 DocumentSnapshot userRecord =
                     await usersReference.doc(auth.currentUser.uid).get();

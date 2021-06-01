@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,56 +8,21 @@ import 'package:weasel_social_media_app/widgets/post_view.dart';
 import '../models/userclass.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage(
-      {this.username,
-      this.photoUrl,
-      this.displayName,
-      this.bio,
-      this.followerCount,
-      this.followingCount});
+  const ProfilePage({this.uid});
 
-  final String username;
-  final String photoUrl;
-  final String displayName;
-  final String bio;
-  final int followerCount;
-  final int followingCount;
-
-  _ProfilePage createState() => _ProfilePage(
-      username: this.username,
-      photoUrl: this.photoUrl,
-      displayName: this.displayName,
-      bio: this.bio,
-      /*this.followers,
-        this.following*/
-      followerCount: this.followerCount,
-      followingCount: this.followingCount);
+  final String uid;
+  _ProfilePage createState() => _ProfilePage();
 }
 
 class _ProfilePage extends State<ProfilePage>
     with AutomaticKeepAliveClientMixin<ProfilePage> {
   //String currentUserId
   bool isFollowing = false;
+  bool firstLoad = true;
   bool followButtonClicked = false;
   int postCount = 0;
   List<Image> userPosts = []; //should be filled by backend
-
-  final String username;
-  final String photoUrl;
-  final String displayName;
-  final String bio;
-  /*final Map followers;
-  final Map following;*/
-  final int followerCount;
-  final int followingCount;
-  _ProfilePage({
-    this.username,
-    this.photoUrl,
-    this.displayName,
-    this.bio,
-    this.followerCount,
-    this.followingCount,
-  });
+  UserClass currentProfile;
 
   @override
   void initState() {
@@ -64,6 +30,14 @@ class _ProfilePage extends State<ProfilePage>
     this._getUserPosts();
     postCount = userPosts.length ?? 0;
     _setCurrentScreen();
+    getUserCred().whenComplete(() => setState(() {
+          firstLoad = false;
+        }));
+  }
+
+  Future<void> getUserCred() async {
+    DocumentSnapshot userRecord = await usersReference.doc(widget.uid).get();
+    currentProfile = UserClass.fromDocument(userRecord);
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -108,10 +82,10 @@ class _ProfilePage extends State<ProfilePage>
 
   editProfile() {
     Navigator.pushNamed(context, '/edit_profile', arguments: {
-      "username": this.username,
-      "displayname": this.displayName,
-      "bio": this.bio,
-      "picture": this.photoUrl
+      "username": currentProfile.username,
+      "displayname": currentProfile.displayName,
+      "bio": currentProfile.bio,
+      "picture": currentProfile.photoUrl
     });
   }
 
@@ -146,7 +120,7 @@ class _ProfilePage extends State<ProfilePage>
 
     Container buildProfileFollowButton(UserClass user) {
       // viewing your own profile - should show edit button
-      if (currentUserModel.username == this.username) {
+      if (currentUserModel.username == currentProfile.username) {
         //should be current_user.username ==this.username but we cant do current user right now.
         return buildFollowButton(
           text: "Edit Profile",
@@ -186,82 +160,105 @@ class _ProfilePage extends State<ProfilePage>
           borderColor: Colors.grey);
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              icon: Icon(Icons.logout),
+    if (firstLoad) {
+      return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white30,
+            centerTitle: true,
+            title: Text(
+              "TechScape",
+              style: TextStyle(
+                fontFamily: 'OpenSans',
+                fontSize: 30,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          body: SafeArea(
+            child: Center(
+                child: Container(
+                    height: 50, width: 50, child: CircularProgressIndicator())),
+          ));
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+                icon: Icon(Icons.logout),
+                color: Colors.black87,
+                onPressed: () {
+                  signOut();
+                })
+          ],
+          backgroundColor: Colors.white30,
+          title: Text(
+            currentProfile.username,
+            style: TextStyle(
               color: Colors.black87,
-              onPressed: () {
-                signOut();
-              })
-        ],
-        backgroundColor: Colors.white30,
-        title: Text(
-          this.username,
-          style: TextStyle(
-            color: Colors.black87,
+            ),
           ),
         ),
-      ),
-      body: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: 24),
-            Row(children: <Widget>[
-              CircleAvatar(
-                radius: 55.0,
-                backgroundImage: NetworkImage(this.photoUrl),
-                backgroundColor: Colors.grey,
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        SizedBox(width: 12),
-                        buildStatColumn("posts", postCount),
-                        buildStatColumn("followers", followerCount),
-                        buildStatColumn("following", followingCount),
-                      ],
-                    ),
-                    Row(
+        body: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 24),
+              Row(children: <Widget>[
+                CircleAvatar(
+                  radius: 55.0,
+                  backgroundImage: NetworkImage(currentProfile.photoUrl),
+                  backgroundColor: Colors.grey,
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           SizedBox(width: 12),
-                          buildProfileFollowButton(currentUserModel)
-                        ]),
-                  ],
-                ),
-              )
-            ]),
-            Container(
+                          buildStatColumn("posts", postCount),
+                          buildStatColumn("followers",
+                              currentProfile.followers.length ?? 0),
+                          buildStatColumn("following",
+                              currentProfile.following.length ?? 0),
+                        ],
+                      ),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            SizedBox(width: 12),
+                            buildProfileFollowButton(currentUserModel)
+                          ]),
+                    ],
+                  ),
+                )
+              ]),
+              Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.only(top: 12.0, left: 10.0),
+                  child: Text(
+                    currentProfile.displayName,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+              Container(
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(top: 12.0, left: 10.0),
-                child: Text(
-                  this.displayName,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                )),
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(top: 1.0, left: 10.0),
-              child: Text(this.bio),
-            ),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 3,
-                crossAxisSpacing: 1.5,
-                mainAxisSpacing: 0.10,
-                shrinkWrap: true,
-                children: userPosts,
+                padding: const EdgeInsets.only(top: 1.0, left: 10.0),
+                child: Text(currentProfile.bio),
               ),
-            ),
-          ]),
-    );
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 1.5,
+                  mainAxisSpacing: 0.10,
+                  shrinkWrap: true,
+                  children: userPosts,
+                ),
+              ),
+            ]),
+      );
+    }
   }
 
   // state would kept when switching pages

@@ -26,13 +26,7 @@ class NormalBottomNavBarState extends State<NormalBottomNavBar> {
     SearchPage(query: " ", pageState: "initial"),
     Uploader(),
     Notifications(),
-    ProfilePage(
-        username: currentUserModel.username,
-        photoUrl: currentUserModel.photoUrl,
-        displayName: currentUserModel.displayName,
-        bio: currentUserModel.bio,
-        followerCount: currentUserModel.followers.length,
-        followingCount: currentUserModel.following.length),
+    ProfilePage(uid: currentUserModel.uid),
   ];
 
   @override

@@ -32,6 +32,13 @@ class _CommentScreenState extends State<CommentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.black,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: Text(
           "Comments",
           style: TextStyle(color: Colors.black),
@@ -93,7 +100,7 @@ class _CommentScreenState extends State<CommentScreen> {
     List<Comment> comments = [];
 
     QuerySnapshot data = await FirebaseFirestore.instance
-        .collection("insta_comments")
+        .collection("posts")
         .doc(postId)
         .collection("comments")
         .get();
@@ -106,7 +113,7 @@ class _CommentScreenState extends State<CommentScreen> {
   addComment(String comment) {
     _commentController.clear();
     FirebaseFirestore.instance
-        .collection("insta_comments")
+        .collection("posts")
         .doc(postId)
         .collection("comments")
         .add({
@@ -119,7 +126,7 @@ class _CommentScreenState extends State<CommentScreen> {
 
     //adds to postOwner's activity feed
     FirebaseFirestore.instance
-        .collection("insta_a_feed")
+        .collection("notifications")
         .doc(postOwner)
         .collection("items")
         .add({

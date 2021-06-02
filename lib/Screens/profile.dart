@@ -39,8 +39,8 @@ class _ProfilePage extends State<ProfilePage>
   Future<void> getUserCred() async {
     DocumentSnapshot userRecord = await usersReference.doc(widget.uid).get();
     currentProfile = UserClass.fromDocument(userRecord);
-    profileowneruid=widget.uid;
-    logineduseruid=currentUserModel.uid;
+    profileowneruid = widget.uid;
+    logineduseruid = currentUserModel.uid;
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -67,6 +67,12 @@ class _ProfilePage extends State<ProfilePage>
       screenName: 'Profile Page',
     );
     print('setCurrentScreen succeeded');
+  }
+
+  Future<void> updateUser() async {
+    DocumentSnapshot userRecord =
+        await usersReference.doc(auth.currentUser.uid).get();
+    currentUserModel = UserClass.fromDocument(userRecord);
   }
 
   _getUserPosts() async {
@@ -98,15 +104,15 @@ class _ProfilePage extends State<ProfilePage>
       followButtonClicked = true;
     });
 
-    usersReference.doc(currentUserModel.uid).update({
-      'followings.$profileowneruid': false
-    });
-    usersReference.doc(profileowneruid).update({
-      'followers.$logineduseruid': false
-    });
-    usersReference.doc(profileowneruid).update({
-      'followers.$logineduseruid': false
-    });
+    usersReference
+        .doc(currentUserModel.uid)
+        .update({'followings.$profileowneruid': false});
+    usersReference
+        .doc(profileowneruid)
+        .update({'followers.$logineduseruid': false});
+    usersReference
+        .doc(profileowneruid)
+        .update({'followers.$logineduseruid': false});
 
     /*TODO*/
     /* delete her items from feed
@@ -116,24 +122,27 @@ class _ProfilePage extends State<ProfilePage>
         .collection("items")
         .doc(currentUserId)
         .delete();*/
+    setState(() {
+      updateUser();
+    });
   }
+
   followUser() {
-        print('following user');
-        setState(() {
-          this.isFollowing = true;
-          followButtonClicked = true;
-        });
+    print('following user');
+    setState(() {
+      this.isFollowing = true;
+      followButtonClicked = true;
+    });
 
-        usersReference.doc(currentUserModel.uid).update({
-          'followings.$profileowneruid': true
-        });
-        usersReference.doc(profileowneruid).update({
-          'followers.$logineduseruid': true
-        });
+    usersReference
+        .doc(currentUserModel.uid)
+        .update({'followings.$profileowneruid': true});
+    usersReference
+        .doc(profileowneruid)
+        .update({'followers.$logineduseruid': true});
 
-
-        //updates activity feed
-        /*FirebaseFirestore.instance
+    //updates activity feed
+    /*FirebaseFirestore.instance
             .collection("insta_a_feed")
             .doc(profileId)
             .collection("items")
@@ -146,7 +155,11 @@ class _ProfilePage extends State<ProfilePage>
           "userProfileImg": currentUserModel.photoUrl,
           "timestamp": DateTime.now()
         });*/
+    setState(() {
+      updateUser();
+    });
   }
+
   int _countFollowings(Map followings) {
     int count = 0;
     void countValues(key, value) {
@@ -154,9 +167,11 @@ class _ProfilePage extends State<ProfilePage>
         count += 1;
       }
     }
+
     followings.forEach(countValues);
     return count;
   }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -193,29 +208,28 @@ class _ProfilePage extends State<ProfilePage>
           borderColor: Colors.grey,
           function: editProfile,
         );
-      }
-      else{
-          // already following user - should show unfollow button
-          if (isFollowing) {
-            return buildFollowButton(
-              text: "Unfollow",
-              backgroundcolor: Colors.white,
-              textColor: Colors.black,
-              borderColor: Colors.grey,
-              function: unfollowUser,
-            );
-          }
+      } else {
+        // already following user - should show unfollow button
+        if (isFollowing) {
+          return buildFollowButton(
+            text: "Unfollow",
+            backgroundcolor: Colors.white,
+            textColor: Colors.black,
+            borderColor: Colors.grey,
+            function: unfollowUser,
+          );
+        }
 
-          // does not follow user - should show follow button
-          else if (!isFollowing) {
-            return buildFollowButton(
-              text: "Follow",
-              backgroundcolor: Colors.blue,
-              textColor: Colors.white,
-              borderColor: Colors.blue,
-              function: followUser,
-            );
-          }
+        // does not follow user - should show follow button
+        else if (!isFollowing) {
+          return buildFollowButton(
+            text: "Follow",
+            backgroundcolor: Colors.blue,
+            textColor: Colors.white,
+            borderColor: Colors.blue,
+            function: followUser,
+          );
+        }
       }
 
       return buildFollowButton(
@@ -228,13 +242,11 @@ class _ProfilePage extends State<ProfilePage>
     if (firstLoad) {
       return Scaffold(
           body: SafeArea(
-            child: Center(
-                child: Container(
-                    height: 50, width: 50, child: CircularProgressIndicator())),
-          ));
-    }
-
-    else {
+        child: Center(
+            child: Container(
+                height: 50, width: 50, child: CircularProgressIndicator())),
+      ));
+    } else {
       return StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('users')
@@ -253,7 +265,6 @@ class _ProfilePage extends State<ProfilePage>
                 followButtonClicked == false) {
               isFollowing = true;
             }
-
 
             return Scaffold(
               appBar: AppBar(
@@ -294,13 +305,17 @@ class _ProfilePage extends State<ProfilePage>
                               children: <Widget>[
                                 SizedBox(width: 12),
                                 buildStatColumn("posts", postCount),
-                                buildStatColumn("followers", _countFollowings(currentProfile.followers)),
-                                buildStatColumn("followings",_countFollowings(currentProfile.followings)),
+                                buildStatColumn("followers",
+                                    _countFollowings(currentProfile.followers)),
+                                buildStatColumn(
+                                    "followings",
+                                    _countFollowings(
+                                        currentProfile.followings)),
                               ],
                             ),
                             Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
                                   SizedBox(width: 12),
                                   buildProfileFollowButton(currentUserModel)
@@ -322,20 +337,50 @@ class _ProfilePage extends State<ProfilePage>
                       child: Text(currentProfile.bio),
                     ),
                     Expanded(
-                      child: GridView.count(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 1.5,
-                        mainAxisSpacing: 0.10,
-                        shrinkWrap: true,
-                        children: userPosts,
-                      ),
+                      child: (currentProfile.isPrivate &&
+                              logineduseruid != profileowneruid &&
+                              !(currentUserModel.followings
+                                      .containsKey(profileowneruid) &&
+                                  currentUserModel
+                                          .followings[profileowneruid] ==
+                                      true))
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.lock,
+                                  size: 70,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  "This user's profile is private.",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                                SizedBox(
+                                  height: 50,
+                                )
+                              ],
+                            )
+                          : GridView.count(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 1.5,
+                              mainAxisSpacing: 0.10,
+                              shrinkWrap: true,
+                              children: userPosts,
+                            ),
                     ),
                   ]),
             );
           });
     }
-    }
-
+  }
 
   // state would kept when switching pages
   @override
@@ -366,8 +411,6 @@ class _ProfilePage extends State<ProfilePage>
     );
   }
 }
-
-
 
 class ImageTile extends StatelessWidget {
   final PostCard imagePost;

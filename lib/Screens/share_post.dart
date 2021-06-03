@@ -240,7 +240,7 @@ void postToFireStore(
 
   reference.add({
     "username": currentUserModel.username,
-    "likes": {},
+    "likes": [],
     "comments": {},
     "mediaUrl": mediaUrl,
     "description": description,

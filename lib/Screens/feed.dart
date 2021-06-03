@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:weasel_social_media_app/models/post_info.dart';
-import 'package:weasel_social_media_app/models/userclass.dart';
 import 'package:weasel_social_media_app/widgets/post_view.dart';
 
 import '../main.dart';
@@ -15,7 +14,7 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
   List<PostCard> feedData = [];
   List<PostInfo> postList = [];
   List<PostInfo> allPostList = [];
-  List<UserClass> followingUsers = [];
+  Map<dynamic, dynamic> followingUsers;
   bool firstLoad = true;
 
   @override
@@ -50,13 +49,16 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
 
   buildFeed() {
     /*This creates feed from list of PostCards*/
-    if (feedData != null) {
+    if (feedData != null && feedData.length != 0) {
       return ListView(
         children: feedData,
       );
     } else if (feedData.length == 0) {
       return Center(
-        child: Text("No posts to show."),
+        child: Text(
+          "No posts to show.",
+          style: TextStyle(color: Colors.black, fontSize: 30),
+        ),
       );
     } else {
       return Container(
@@ -95,11 +97,10 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
   }
 
   Future<void> getFollowings() async {
-    QuerySnapshot querySnapshot = await usersReference.get();
-    for (int i = 0; i < querySnapshot.docs.length; i++) {
-      UserClass temp = UserClass.fromDocument(querySnapshot.docs[i]);
-      followingUsers.add(temp);
-    }
+    DocumentSnapshot docSnapshot =
+        await usersReference.doc(currentUserModel.uid).get();
+    followingUsers = docSnapshot.data();
+    followingUsers = followingUsers["followings"];
   }
 
   Future<void> getPosts() async {
@@ -142,10 +143,10 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
         likeCount: 88,
         uid: "USM7K6scz1ZlrC0kfMg6VWNj0Xc*/
     List<PostInfo> postList = [];
-    for (int x = 0; x < allPostList.length; x++) {
-      if (followingUsers
-              .indexWhere((element) => element.uid == allPostList[x].uid) !=
-          -1) postList.add(allPostList[x]);
+    int length = allPostList.length ?? 0;
+    for (int x = 0; x < length; x++) {
+      if (followingUsers.containsKey(allPostList[x].uid))
+        postList.add(allPostList[x]);
     }
     _generateFeed(postList);
     setState(() {});

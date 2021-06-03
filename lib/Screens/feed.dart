@@ -14,7 +14,7 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
   List<PostCard> feedData = [];
   List<PostInfo> postList = [];
   List<PostInfo> allPostList = [];
-  Map<dynamic, dynamic> followingUsers;
+  Map<dynamic, dynamic> followingUsers = {};
   bool firstLoad = true;
 
   @override
@@ -112,15 +112,18 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
     }
   }
 
-  Future<Null> _refresh() async {
+  Future<void> _refresh() async {
+    print("refresh");
+    allPostList.clear();
+    followingUsers.clear();
+    postList.clear();
+    feedData.clear();
     await getPosts();
     await getFollowings();
     await _getFeed();
-    setState(() {});
-    return;
   }
 
-  _getFeed() async {
+  Future<void> _getFeed() async {
     /*TODO this would get feed info from backend then give it to generate feed*/
     print("Starting getFeed");
     _setLogEvent("Feed", "Posts refreshed.");
@@ -142,14 +145,23 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
             "https://www.trtspor.com.tr/resimler/366000/366896.jpg",
         likeCount: 88,
         uid: "USM7K6scz1ZlrC0kfMg6VWNj0Xc*/
-    List<PostInfo> postList = [];
     int length = allPostList.length ?? 0;
     for (int x = 0; x < length; x++) {
-      if (followingUsers.containsKey(allPostList[x].uid))
-        postList.add(allPostList[x]);
+      if (followingUsers.containsKey(allPostList[x].uid)) {
+        if (checkDuplicate(allPostList[x], postList)) {
+          postList.add(allPostList[x]);
+        }
+      }
     }
     _generateFeed(postList);
     setState(() {});
+  }
+
+  bool checkDuplicate(PostInfo temp, List<PostInfo> postList) {
+    for (int x = 0; x < postList.length; x++) {
+      if (postList[x].pid == temp.pid) return false;
+    }
+    return true;
   }
 
   @override

@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:weasel_social_media_app/widgets/notification_view.dart';
 import 'package:weasel_social_media_app/models/notification.dart';
+
+import '../main.dart';
 
 class Notifications extends StatefulWidget {
   @override
@@ -13,6 +16,7 @@ class _NotificationsState extends State<Notifications>
     with AutomaticKeepAliveClientMixin<Notifications> {
   List<NotificationCard> notificationCardList = []; //views that we generated.
   List<notification_info> notificationList = []; //info taken from backend
+  bool finished=false;
 
   void initState() {
     super.initState();
@@ -52,52 +56,36 @@ class _NotificationsState extends State<Notifications>
       notificationCardList.add(temp);
       index++;
     }
+    finished=true;
   }
 
   buildNotifications() {
     /*This creates notif view from list of notif card views*/
-    if (notificationCardList != null) {
+    if(finished){
+    if (notificationCardList.isNotEmpty) {
       return ListView(
         children: notificationCardList,
       );
     } else {
-      return Container(
-          alignment: FractionalOffset.center,
-          child: CircularProgressIndicator());
+      return Center(
+          child:Text("Welcome to Weasel, you will see your notifications here!"),
+      );
+    }
+    }
+    else{
+      return Center(child: CircularProgressIndicator());
     }
   }
 
   _getNotifications() async {
-    /*TODO this would get notifs info from backend then give it to generate list*/
-    notification_info temp = notification_info(
-        username: "mbappe",
-        photoUrl:
-            "https://www.yenicaggazetesi.com.tr/d/other/esgxywducae-yho.jpg",
-        profilePhotoUrl:
-            "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
-        notificationType: 1,
-    uid:"USM7K6scz1ZlrC0kfMg6VWNj0Xc2",);
-    notification_info temp2 = notification_info(
-        username: "mbappe",
-        photoUrl:
-            "https://www.yenicaggazetesi.com.tr/d/other/esgxywducae-yho.jpg",
-        profilePhotoUrl:
-            "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
-        notificationType: 2,
-      uid:"USM7K6scz1ZlrC0kfMg6VWNj0Xc2",);
-    notification_info temp3 = notification_info(
-        username: "mbappe",
-        photoUrl:
-            "https://www.yenicaggazetesi.com.tr/d/other/esgxywducae-yho.jpg",
-        profilePhotoUrl:
-            "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
-        notificationType: 0,
-      uid:"USM7K6scz1ZlrC0kfMg6VWNj0Xc2",);
-    for (int x = 0; x < 3; x++) {
+
+    QuerySnapshot querySnapshot =
+    await FirebaseFirestore.instance.collection("notifications").doc(currentUserModel.uid).collection("items").get();
+    for (int i = 0; i < querySnapshot.docs.length; i++) {
+      notification_info temp = notification_info.fromDocument(querySnapshot.docs[i]);
       notificationList.add(temp);
-      notificationList.add(temp2);
-      notificationList.add(temp3);
     }
+
     _generateNotifications(notificationList);
     setState(() {});
   }

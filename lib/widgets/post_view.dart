@@ -103,6 +103,12 @@ class _PostCard extends State<PostCard> {
         'likes': FieldValue.arrayRemove([currentUserId])
       });
       this.likeCount--;
+      FirebaseFirestore.instance
+          .collection("notifications")
+          .doc(widget.uid) //post owners uid.
+          .collection("items") //post owners notifs
+          .doc(currentUserModel.uid) //delete that likers notif
+          .delete();
     } else {
       print('liked');
       setState(() {
@@ -112,6 +118,19 @@ class _PostCard extends State<PostCard> {
         'likes': FieldValue.arrayUnion([currentUserId])
       });
       this.likeCount++;
+      FirebaseFirestore.instance
+          .collection("notifications")
+          .doc(widget.uid)
+          .collection("items")
+          .add({
+        "username": currentUserModel.username,
+        "userId": currentUserModel.uid,
+        "type": "like",
+        "userProfileImg": currentUserModel.photoUrl,
+        "timestamp": Timestamp.now(),
+        "postId": widget.pid,
+        "mediaUrl": widget.mediaUrl,
+      });
     }
   }
 

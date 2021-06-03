@@ -141,6 +141,17 @@ class _ProfilePage extends State<ProfilePage>
         .doc(profileowneruid)
         .update({'followers.$logineduseruid': true});
 
+    FirebaseFirestore.instance
+        .collection("notifications")
+        .doc(currentProfile.uid)
+        .collection("items")
+        .add({
+      "username": currentUserModel.username,
+      "userId": currentUserModel.uid,
+      "type": "follow",
+      "userProfileImg": currentUserModel.photoUrl,
+      "timestamp": Timestamp.now(),
+    });
     //updates activity feed
     /*FirebaseFirestore.instance
             .collection("insta_a_feed")

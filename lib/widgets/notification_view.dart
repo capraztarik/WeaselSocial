@@ -12,7 +12,7 @@ class NotificationCard extends StatefulWidget {
   final String photoUrl;
   final String profilePhotoUrl;
   final String username;
-  final int notificationType;
+  final String notificationType;
   final String uid;
 
   _NotificationCard createState() => _NotificationCard(
@@ -29,7 +29,7 @@ class _NotificationCard extends State<NotificationCard> {
   final String profilePhotoUrl;
   final String username;
   final String uid;
-  final int notificationType;
+  final String notificationType;
   int likeCount;
   bool followed = false;
 
@@ -66,20 +66,20 @@ class _NotificationCard extends State<NotificationCard> {
 
   buildNotification(
       {String ownerId,
-      int notificationType,
+      String notificationType,
       String profilePhotoUrl,
       String photoUrl}) {
     String notification;
     if (ownerId == null) {
       return Text("owner error");
     }
-    if (notificationType == 0) {
+    if (notificationType == "follow") {
       notification = "followed you.";
     }
-    if (notificationType == 1) {
+    if (notificationType == "like") {
       notification = "liked your post.";
     }
-    if (notificationType == 2) {
+    if (notificationType == "comment") {
       notification = "comment on your post.";
     }
     return ListTile(

@@ -8,7 +8,7 @@ import 'dart:io';
 import '../main.dart';
 
 File file;
-
+bool isVideo=false;
 class Uploader extends StatefulWidget {
   _Uploader createState() => _Uploader();
 }
@@ -120,7 +120,7 @@ class _PostFormState extends State<PostForm> {
                   });
                 }),
             SimpleDialogOption(
-                child: const Text('Choose from Gallery'),
+                child: const Text('Choose Photo from Gallery'),
                 onPressed: () async {
                   Navigator.of(context).pop();
                   PickedFile imageFile = await imagePicker.getImage(
@@ -130,6 +130,30 @@ class _PostFormState extends State<PostForm> {
                       imageQuality: 80);
                   setState(() {
                     file = File(imageFile.path);
+                  });
+                }),
+            SimpleDialogOption(
+                child: const Text('Choose Video from Gallery'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  PickedFile imageFile = await imagePicker.getVideo(
+                      source: ImageSource.gallery,
+                      );
+                  setState(() {
+                    file = File(imageFile.path);
+                    isVideo=true;
+                  });
+                }),
+            SimpleDialogOption(
+                child: const Text('Capture a Video'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  PickedFile imageFile = await imagePicker.getVideo(
+                    source: ImageSource.camera,
+                  );
+                  setState(() {
+                    file = File(imageFile.path);
+                    isVideo=true;
                   });
                 }),
             SimpleDialogOption(
@@ -179,7 +203,7 @@ class _PostFormState extends State<PostForm> {
                         image: DecorationImage(
                       fit: BoxFit.fill,
                       alignment: FractionalOffset.topCenter,
-                      image: file == null
+                      image: (file == null || isVideo==true)
                           ? AssetImage("assets/images/add_photo.png")
                           : FileImage(file),
                     )),

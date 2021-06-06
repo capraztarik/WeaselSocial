@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 class PostCard extends StatefulWidget {
   const PostCard({
@@ -43,7 +44,7 @@ class _PostCard extends State<PostCard> {
   final String profilePhotoUrl;
   int likeCount;
   bool liked = false;
-
+  VideoPlayerController _cameraVideoPlayerController;
   _PostCard({
     this.username,
     this.location,
@@ -93,11 +94,27 @@ class _PostCard extends State<PostCard> {
   }
 
   GestureDetector buildLikeableImage({String mediaUrl}) {
-    return GestureDetector(
-      onDoubleTap: () => _likePost(/*postId*/),
-      child: Image.network(mediaUrl),
-    );
+    try {
+      return GestureDetector(
+        onDoubleTap: () => _likePost(/*postId*/),
+        child: Image.network(mediaUrl),
+      );
+    } catch (e) {
+      //THESE MEANS İT İS VİDEO
+      _cameraVideoPlayerController = VideoPlayerController.network(mediaUrl)..initialize().then((_) {
+        setState(() { });
+
+      });
+      return GestureDetector(
+        onDoubleTap: () => _likePost(/*postId*/),
+          onTap: () =>  _cameraVideoPlayerController.play(),
+         onTapCancel:() =>_cameraVideoPlayerController.pause(),
+        child: VideoPlayer(_cameraVideoPlayerController),
+      );
+    }
+
   }
+
 
   buildPostHeader({String ownerId, String location, String profilePhotoUrl}) {
     if (ownerId == null) {

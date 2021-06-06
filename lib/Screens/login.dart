@@ -16,7 +16,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  int attemptCount;
+  int attemptCount = 0;
   String email;
   String pass;
   final _formKey = GlobalKey<FormState>();

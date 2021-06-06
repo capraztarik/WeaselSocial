@@ -32,6 +32,13 @@ class _CommentScreenState extends State<CommentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.black,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: Text(
           "Comments",
           style: TextStyle(color: Colors.black),
@@ -53,11 +60,13 @@ class _CommentScreenState extends State<CommentScreen> {
           title: TextFormField(
             controller: _commentController,
             decoration: InputDecoration(labelText: 'Write a comment...'),
-            onFieldSubmitted: addComment,
           ),
           trailing: OutlineButton(
             onPressed: () {
-              addComment(_commentController.text);
+              if (_commentController.text != "")
+                addComment(_commentController.text);
+              else
+                showAlertDialog("Error", "Comment can't be empty");
             },
             borderSide: BorderSide.none,
             child: Text("Post"),
@@ -65,6 +74,32 @@ class _CommentScreenState extends State<CommentScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> showAlertDialog(String title, String message) async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false, //User must tap button
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  Text(message),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   Widget buildComments() {
@@ -93,7 +128,7 @@ class _CommentScreenState extends State<CommentScreen> {
     List<Comment> comments = [];
 
     QuerySnapshot data = await FirebaseFirestore.instance
-        .collection("insta_comments")
+        .collection("posts")
         .doc(postId)
         .collection("comments")
         .get();
@@ -106,7 +141,7 @@ class _CommentScreenState extends State<CommentScreen> {
   addComment(String comment) {
     _commentController.clear();
     FirebaseFirestore.instance
-        .collection("insta_comments")
+        .collection("posts")
         .doc(postId)
         .collection("comments")
         .add({
@@ -119,7 +154,7 @@ class _CommentScreenState extends State<CommentScreen> {
 
     //adds to postOwner's activity feed
     FirebaseFirestore.instance
-        .collection("insta_a_feed")
+        .collection("notifications")
         .doc(postOwner)
         .collection("items")
         .add({

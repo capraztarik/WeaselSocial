@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'Screens/Navigation.dart';
 import 'Screens/Onboard.dart';
 import 'Screens/Search.dart';
+import 'Screens/comment_screen.dart';
 import 'Screens/feed.dart';
 import 'Screens/login.dart';
 import 'Screens/notifications.dart';
@@ -92,6 +93,7 @@ class _MyAppState extends State<MyApp> {
         '/edit_profile': (context) => EditProfile(),
         '/notifications': (context) => Notifications(),
         '/share_post': (context) => Uploader(),
+        '/comments': (context) => CommentScreen(),
       },
     );
   }

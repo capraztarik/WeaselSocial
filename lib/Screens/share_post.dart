@@ -58,6 +58,32 @@ class _Uploader extends State<Uploader> {
         ));
   }
 
+  Future<void> showAlertDialog(String title, String message) async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false, //User must tap button
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  Text(message),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   //method to build buttons with location.
 
   void clearImage() {
@@ -67,20 +93,25 @@ class _Uploader extends State<Uploader> {
   }
 
   void postImage() {
-    setState(() {
-      uploading = true;
-    });
-    uploadImage(file).then((String data) {
-      postToFireStore(
-        mediaUrl: data,
-        description: descriptionController.text,
-      );
-    }).then((_) {
+    if (file != null) {
       setState(() {
-        file = null;
-        uploading = false;
+        uploading = true;
       });
-    });
+      uploadImage(file).then((String data) {
+        postToFireStore(
+          mediaUrl: data,
+          description: descriptionController.text,
+        );
+      }).then((_) {
+        setState(() {
+          file = null;
+          uploading = false;
+          descriptionController.clear();
+        });
+      });
+    } else {
+      showAlertDialog("Error", "Please upload an image.");
+    }
   }
 }
 
@@ -233,10 +264,12 @@ void postToFireStore(
 
   reference.add({
     "username": currentUserModel.username,
-    "likes": {},
+    "likes": [],
+    "comments": {},
     "mediaUrl": mediaUrl,
     "description": description,
     "ownerId": currentUserModel.uid,
+    "profilePhotoUrl": currentUserModel.photoUrl,
     "timestamp": DateTime.now(),
   }).then((DocumentReference doc) {
     String docId = doc.id;

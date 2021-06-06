@@ -56,7 +56,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                         "profile_picture":
                             "https://firebasestorage.googleapis.com/v0/b/weaselsocial.appspot.com/o/Splash.png?alt=media&token=ced17135-e65c-47fa-8cd3-3570130b1309",
                         "followers": {},
-                        "following": {},
+                        "followings": {},
                       })
                       .then((value) => print("User Added"))
                       .catchError(

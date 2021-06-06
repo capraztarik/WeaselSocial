@@ -81,10 +81,9 @@ class _SignUpState extends State<SignUp> {
           email: mail, password: pass);
 
       //DocumentSnapshot userRecord = await usersReference.doc(user.id).get();
-      CollectionReference users =
-          FirebaseFirestore.instance.collection('users');
+
       //currentUserModel = auth.currentUser;
-      users
+      usersReference
           .doc(auth.currentUser.uid)
           .set({
             "uid": auth.currentUser.uid,
@@ -95,7 +94,7 @@ class _SignUpState extends State<SignUp> {
             "profile_picture":
                 "https://firebasestorage.googleapis.com/v0/b/weaselsocial.appspot.com/o/Splash.png?alt=media&token=ced17135-e65c-47fa-8cd3-3570130b1309",
             "followers": {},
-            "following": {},
+            "followings": {},
           })
           .then((value) => print("User Added"))
           .catchError((error) => print("Failed to add user: $error"));

@@ -1,69 +1,85 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:weasel_social_media_app/Screens/comment_screen.dart';
+import 'package:weasel_social_media_app/Screens/profile.dart';
+import 'package:weasel_social_media_app/main.dart';
 import 'package:video_player/video_player.dart';
 
 class PostCard extends StatefulWidget {
-  const PostCard({
-    this.username,
-    this.location,
-    this.caption,
-    this.mediaUrl,
-    this.profilePhotoUrl,
-    this.likeCount,
-  });
+  const PostCard(
+      {this.username,
+      this.pid,
+      this.uid,
+      this.caption,
+      this.mediaUrl,
+      this.profilePhotoUrl,
+      this.likeCount,
+      this.isLiked});
 
   factory PostCard.fromJSON(Map data) {
     return PostCard(
-      username: data['username'],
-      location: data['location'],
-      caption: data['caption'],
-      mediaUrl: data['mediaUrl'],
-      profilePhotoUrl: data['profilePhotoUrl'],
-    );
+        username: data['username'],
+        uid: data['uid'],
+        pid: data['postId'],
+        caption: data['caption'],
+        mediaUrl: data['mediaUrl'],
+        profilePhotoUrl: data['profilePhotoUrl'],
+        isLiked: data['isLiked'],
+        likeCount: data['likeCount']);
   }
   final String username;
-  final String location;
+  final String uid;
+  final String pid;
   final String caption;
   final String mediaUrl;
   final String profilePhotoUrl;
   final int likeCount;
+  final bool isLiked;
+
   _PostCard createState() => _PostCard(
-        username: this.username,
-        location: this.location,
-        caption: this.caption,
-        mediaUrl: this.mediaUrl,
-        profilePhotoUrl: this.profilePhotoUrl,
-        likeCount: this.likeCount,
-      );
+      username: this.username,
+      caption: this.caption,
+      uid: this.uid,
+      mediaUrl: this.mediaUrl,
+      profilePhotoUrl: this.profilePhotoUrl,
+      likeCount: this.likeCount ?? 0,
+      liked: this.isLiked);
 }
 
 class _PostCard extends State<PostCard> {
   final String username;
-  final String location;
   final String caption;
   final String mediaUrl;
+  final String uid;
   final String profilePhotoUrl;
-  int likeCount;
+  int likeCount = 0;
   bool liked = false;
   VideoPlayerController _cameraVideoPlayerController;
-  _PostCard({
-    this.username,
-    this.location,
-    this.caption,
-    this.likeCount,
-    this.mediaUrl,
-    this.profilePhotoUrl,
-  });
+  String currentUserId = currentUserModel.uid;
+
+  _PostCard(
+      {this.username,
+      this.caption,
+      this.likeCount,
+      this.uid,
+      this.mediaUrl,
+      this.profilePhotoUrl,
+      this.liked});
 
   GestureDetector buildLikeIcon() {
     Color color;
     IconData icon;
 
     if (liked) {
-      color = Colors.pink;
-      icon = Icons.favorite;
+      setState(() {
+        color = Colors.pink;
+        icon = Icons.favorite;
+      });
     } else {
-      color = Colors.grey;
-      icon = Icons.favorite;
+      setState(() {
+        color = Colors.grey;
+        icon = Icons.favorite;
+      });
     }
 
     return GestureDetector(
@@ -73,23 +89,50 @@ class _PostCard extends State<PostCard> {
           color: color,
         ),
         onTap: () {
-          //_likePost(postId);
+          _likePost();
         });
   }
 
   void _likePost(/*String postId2*/) {
-    bool _liked = false;
+    //bool _liked = false;
 
-    if (_liked) {
+    if (liked) {
       print('removing like');
-      _liked = false;
+      setState(() {
+        liked = false;
+      });
+      FirebaseFirestore.instance.collection("posts").doc(widget.pid).update({
+        'likes': FieldValue.arrayRemove([currentUserId])
+      });
       this.likeCount--;
-    }
-
-    if (!_liked) {
+      FirebaseFirestore.instance
+          .collection("notifications")
+          .doc(widget.uid) //post owners uid.
+          .collection("items") //post owners notifs
+          .doc(currentUserModel.uid) //delete that likers notif
+          .delete();
+    } else {
       print('liked');
-      _liked = true;
+      setState(() {
+        liked = true;
+      });
+      FirebaseFirestore.instance.collection("posts").doc(widget.pid).update({
+        'likes': FieldValue.arrayUnion([currentUserId])
+      });
       this.likeCount++;
+      FirebaseFirestore.instance
+          .collection("notifications")
+          .doc(widget.uid)
+          .collection("items")
+          .add({
+        "username": currentUserModel.username,
+        "userId": currentUserModel.uid,
+        "type": "like",
+        "userProfileImg": currentUserModel.photoUrl,
+        "timestamp": Timestamp.now(),
+        "postId": widget.pid,
+        "mediaUrl": widget.mediaUrl,
+      });
     }
   }
 
@@ -116,29 +159,54 @@ class _PostCard extends State<PostCard> {
   }
 
 
-  buildPostHeader({String ownerId, String location, String profilePhotoUrl}) {
+  buildPostHeader({String ownerId, String profilePhotoUrl}) {
     if (ownerId == null) {
       return Text("owner error");
     }
-    return ListTile(
-        leading: CircleAvatar(
-          //backgroundImage: AssetImage(DemoValues.userImage),
-          backgroundImage: NetworkImage(profilePhotoUrl),
-          backgroundColor: Colors.grey,
-        ),
-        title: GestureDetector(
-          child: Text(ownerId),
-          onTap: () {
-            //openProfile(context, ownerId);
-          },
-        ),
-        subtitle: Text(location),
-        trailing: GestureDetector(
-          child: Icon(Icons.more_vert),
-          onTap: () {
-            //openPostSettings();
-          },
-        ));
+
+    return GestureDetector(
+      child: ListTile(
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(uid: widget.uid),
+                ),
+              );
+            },
+            child: CircleAvatar(
+              //backgroundImage: AssetImage(DemoValues.userImage),
+              backgroundImage: NetworkImage(profilePhotoUrl),
+              backgroundColor: Colors.grey,
+            ),
+          ),
+          title: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(uid: widget.uid),
+                  ),
+                );
+              },
+              child: Text(ownerId)),
+          //subtitle: Text(""),
+          trailing: GestureDetector(
+            child: Icon(Icons.report_gmailerrorred_outlined),
+            onTap: () {
+              //openPostSettings();
+            },
+          )),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfilePage(uid: uid),
+          ),
+        );
+      },
+    );
   }
 
   Widget build(BuildContext context) {
@@ -148,9 +216,7 @@ class _PostCard extends State<PostCard> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         buildPostHeader(
-            ownerId: this.username,
-            location: this.location,
-            profilePhotoUrl: this.profilePhotoUrl),
+            ownerId: this.username, profilePhotoUrl: this.profilePhotoUrl),
         buildLikeableImage(mediaUrl: this.mediaUrl),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -164,7 +230,16 @@ class _PostCard extends State<PostCard> {
                   size: 25.0,
                 ),
                 onTap: () {
-                  goToComments();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CommentScreen(
+                        postId: widget.pid,
+                        postOwner: widget.uid,
+                        postMediaUrl: widget.mediaUrl,
+                      ),
+                    ),
+                  );
                 }),
           ],
         ),
@@ -194,6 +269,4 @@ class _PostCard extends State<PostCard> {
       ],
     );
   }
-
-  void goToComments() {}
 }

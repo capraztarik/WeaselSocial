@@ -251,11 +251,21 @@ class _PostFormState extends State<PostForm> {
 
 Future<String> uploadImage(var imageFile) async {
   var uuid = Uuid().v1();
-  Reference ref = FirebaseStorage.instance.ref().child("posts/post_$uuid.jpg");
-  UploadTask uploadTask = ref.putFile(imageFile);
+  if(isVideo){
+    Reference ref = FirebaseStorage.instance.ref().child("posts/post_$uuid.mp4");
+    UploadTask uploadTask = ref.putFile(imageFile);
 
-  String downloadUrl = await (await uploadTask).ref.getDownloadURL();
-  return downloadUrl;
+    String downloadUrl = await (await uploadTask).ref.getDownloadURL();
+    return downloadUrl;
+  }
+  else{
+    Reference ref = FirebaseStorage.instance.ref().child("posts/post_$uuid.jpg");
+    UploadTask uploadTask = ref.putFile(imageFile);
+
+    String downloadUrl = await (await uploadTask).ref.getDownloadURL();
+    return downloadUrl;
+  }
+
 }
 
 void postToFireStore(

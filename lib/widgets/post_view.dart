@@ -137,23 +137,23 @@ class _PostCard extends State<PostCard> {
   }
 
   GestureDetector buildLikeableImage({String mediaUrl}) {
-    try {
+    if(mediaUrl.contains('jpg')) {
       return GestureDetector(
         onDoubleTap: () => _likePost(/*postId*/),
         child: Image.network(mediaUrl),
       );
-    } catch (e) {
+    }
+    else {
       //THESE MEANS İT İS VİDEO
       _cameraVideoPlayerController = VideoPlayerController.network(mediaUrl)..initialize().then((_) {
-        setState(() { });
-
-      });
-      return GestureDetector(
-        onDoubleTap: () => _likePost(/*postId*/),
+        setState(() {
+          return GestureDetector(
+          onDoubleTap: () => _likePost(/*postId*/),
           onTap: () =>  _cameraVideoPlayerController.play(),
-         onTapCancel:() =>_cameraVideoPlayerController.pause(),
-        child: VideoPlayer(_cameraVideoPlayerController),
-      );
+          onTapCancel:() =>_cameraVideoPlayerController.pause(),
+          child: VideoPlayer(_cameraVideoPlayerController),
+        ); });
+      });
     }
 
   }

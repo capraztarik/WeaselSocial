@@ -316,8 +316,13 @@ class _ProfilePage extends State<ProfilePage>
                               children: <Widget>[
                                 SizedBox(width: 12),
                                 buildStatColumn("posts", postCount),
-                                buildStatColumn("followers",
-                                    _countFollowings(currentProfile.followers)),
+                                GestureDetector(
+                                  child: buildStatColumn("followers",
+                                      _countFollowings(currentProfile.followers)),
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/followers');
+                                  },
+                                ),
                                 buildStatColumn(
                                     "followings",
                                     _countFollowings(

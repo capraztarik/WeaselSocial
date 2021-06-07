@@ -65,7 +65,7 @@ class _Followers_viewState extends State<Followers_view>
 
   _getFollowers() async {
     for (int x = 0; x < AllUsers.length; x++) {
-      for (int y = 0; x < AllUsers[x].followings.length; y++) {
+      for (int y = 0; y < AllUsers[x].followings.length; y++) {
         if (AllUsers[x].followings[y] == id) {
           followerUsersfinal.add(AllUsers[x]);
         }
@@ -76,15 +76,13 @@ class _Followers_viewState extends State<Followers_view>
 
   generateFollowers(List<UserClass> followerUsersfinal) {
     /* TODO Generates notifCards(view) with information taken from backend*/
-    int index = 0;
-    while (index < followerUsersfinal.length) {
+      for (int x = 0; x < followerUsersfinal.length ?? 0; x++){
       FollowersCard temp = FollowersCard(
-        username: followerUsersfinal[index].username,
-        profilePhotoUrl: followerUsersfinal[index].photoUrl,
-        uid:followerUsersfinal[index].uid,
+        username: followerUsersfinal[x].username,
+        profilePhotoUrl: followerUsersfinal[x].photoUrl,
+        uid:followerUsersfinal[x].uid,
       );
       followersCardList.add(temp);
-      index++;
     }
   }
 
@@ -118,7 +116,7 @@ class _Followers_viewState extends State<Followers_view>
 
   _getFollowings() async {
     for (int x = 0; x < AllUsers.length; x++) {
-      for (int y = 0; x < AllUsers[x].followers.length; y++) {
+      for (int y = 0; y < AllUsers[x].followers.length; y++) {
         if (AllUsers[x].followers[y] == id) {
           followingUsersfinal.add(AllUsers[x]);
         }
@@ -163,7 +161,7 @@ class _Followers_viewState extends State<Followers_view>
 
     _setLogEvent("_getFollowers, getFollowings", "Following ans Followers refreshed.");
 
-    setState(() {});
+    //setState(() {});
 
     return;
   }

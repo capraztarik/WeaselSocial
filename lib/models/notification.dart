@@ -6,7 +6,7 @@ class notification_info {
   final String profilePhotoUrl;
   final String username;
   final String uid;
-  final String notificationType; /*it can be like or comment 1 or 2*/
+  final String notificationType; /*it can be= like , comment, follow,followrequest*/
 
   const notification_info(
       {this.username,

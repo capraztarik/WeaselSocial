@@ -18,6 +18,8 @@ class _ProfilePage extends State<ProfilePage>
     with AutomaticKeepAliveClientMixin<ProfilePage> {
   //String currentUserId
   bool isFollowing = false;
+  bool isFollowRequest=false;
+  bool isPrivate=false;
   bool firstLoad = true;
   bool followButtonClicked = false;
   int postCount = 0;
@@ -110,9 +112,6 @@ class _ProfilePage extends State<ProfilePage>
     usersReference
         .doc(profileowneruid)
         .update({'followers.$logineduseruid': false});
-    usersReference
-        .doc(profileowneruid)
-        .update({'followers.$logineduseruid': false});
 
     /*TODO*/
     /* delete her items from feed
@@ -152,20 +151,28 @@ class _ProfilePage extends State<ProfilePage>
       "userProfileImg": currentUserModel.photoUrl,
       "timestamp": Timestamp.now(),
     });
-    //updates activity feed
-    /*FirebaseFirestore.instance
-            .collection("insta_a_feed")
-            .doc(profileId)
-            .collection("items")
-            .doc(currentUserId)
-            .set({
-          "ownerId": profileId,
-          "username": currentUserModel.username,
-          "userId": currentUserId,
-          "type": "follow",
-          "userProfileImg": currentUserModel.photoUrl,
-          "timestamp": DateTime.now()
-        });*/
+    setState(() {
+      updateUser();
+    });
+  }
+  followRequest() {
+    print('following requested');
+    setState(() {
+      isFollowRequest = true;
+      followButtonClicked = true;
+    });
+
+    FirebaseFirestore.instance
+        .collection("notifications")
+        .doc(currentProfile.uid)
+        .collection("items")
+        .add({
+      "username": currentUserModel.username,
+      "userId": currentUserModel.uid,
+      "type": "followrequest",
+      "userProfileImg": currentUserModel.photoUrl,
+      "timestamp": Timestamp.now(),
+    });
     setState(() {
       updateUser();
     });
@@ -230,15 +237,33 @@ class _ProfilePage extends State<ProfilePage>
             function: unfollowUser,
           );
         }
+        if (isFollowRequest) {
+          return buildFollowButton(
+            text: "Requested to Follow.",
+            backgroundcolor: Colors.white,
+            textColor: Colors.black,
+            borderColor: Colors.grey,
+            function: unfollowUser,
+          );
+        }
 
         // does not follow user - should show follow button
-        else if (!isFollowing) {
+        if (!isFollowing &&!isPrivate) {
           return buildFollowButton(
             text: "Follow",
             backgroundcolor: Colors.blue,
             textColor: Colors.white,
             borderColor: Colors.blue,
             function: followUser,
+          );
+        }
+        if (!isFollowing &&isPrivate) {
+          return buildFollowButton(
+            text: "Request Follow.",
+            backgroundcolor: Colors.blue,
+            textColor: Colors.white,
+            borderColor: Colors.blue,
+            function: followRequest,
           );
         }
       }
@@ -270,7 +295,9 @@ class _ProfilePage extends State<ProfilePage>
                   child: CircularProgressIndicator());
 
             UserClass profileOwner = UserClass.fromDocument(snapshot.data);
-
+            if(profileOwner.isPrivate){
+              isPrivate=true;
+            }
             if (profileOwner.followers.containsKey(currentUserModel.uid) &&
                 profileOwner.followers[currentUserModel.uid] == true &&
                 followButtonClicked == false) {

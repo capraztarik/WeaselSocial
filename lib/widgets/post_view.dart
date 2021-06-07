@@ -56,7 +56,7 @@ class _PostCard extends State<PostCard> {
   bool liked = false;
   VideoPlayerController _cameraVideoPlayerController;
   String currentUserId = currentUserModel.uid;
-
+  Future<void> _initializeVideoPlayerFuture;
   _PostCard(
       {this.username,
       this.caption,
@@ -66,6 +66,27 @@ class _PostCard extends State<PostCard> {
       this.profilePhotoUrl,
       this.liked});
 
+  @override
+  /*void initState() {
+
+    if(mediaUrl.contains('mp4'))
+    {
+    _cameraVideoPlayerController = VideoPlayerController.network(mediaUrl);
+
+    /*_initializeVideoPlayerFuture = _cameraVideoPlayerController.initialize();*/
+    /*TODO ERROR CAUSED BY THİS LİNE*/
+    _cameraVideoPlayerController.setLooping(true);
+    }
+
+    super.initState();
+  }*/
+  @override
+  void dispose() {
+    // Ensure disposing of the VideoPlayerController to free up resources.
+    _cameraVideoPlayerController.dispose();
+
+    super.dispose();
+  }
   GestureDetector buildLikeIcon() {
     Color color;
     IconData icon;
@@ -144,16 +165,41 @@ class _PostCard extends State<PostCard> {
       );
     }
     else {
-      //THESE MEANS İT İS VİDEO
-      _cameraVideoPlayerController = VideoPlayerController.network(mediaUrl)..initialize().then((_) {
-        setState(() {
-          return GestureDetector(
-          onDoubleTap: () => _likePost(/*postId*/),
-          onTap: () =>  _cameraVideoPlayerController.play(),
-          onTapCancel:() =>_cameraVideoPlayerController.pause(),
+      _cameraVideoPlayerController = VideoPlayerController.network(mediaUrl);
+      return GestureDetector(
+        onDoubleTap: () => _likePost(),
+        onTap: () =>  _cameraVideoPlayerController.play(),
+        onTapCancel:() =>_cameraVideoPlayerController.pause(),
+        child: AspectRatio(
+        aspectRatio: _cameraVideoPlayerController.value.aspectRatio,
+        // Use the VideoPlayer widget to display the video.
           child: VideoPlayer(_cameraVideoPlayerController),
-        ); });
-      });
+      ),
+      );
+
+      /*return GestureDetector(
+        onDoubleTap: () => _likePost(),
+        onTap: () =>  _cameraVideoPlayerController.play(),
+        onTapCancel:() =>_cameraVideoPlayerController.pause(),
+        child:FutureBuilder(
+          future: _initializeVideoPlayerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              // If the VideoPlayerController has finished initialization, use
+              // the data it provides to limit the aspect ratio of the video.
+              return AspectRatio(
+                aspectRatio: _cameraVideoPlayerController.value.aspectRatio,
+                // Use the VideoPlayer widget to display the video.
+                child: VideoPlayer(_cameraVideoPlayerController),
+              );
+            } else {
+              // If the VideoPlayerController is still initializing, show a
+              // loading spinner.
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+    );*/
     }
 
   }

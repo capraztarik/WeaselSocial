@@ -24,7 +24,7 @@ class _ProfilePage extends State<ProfilePage>
   bool firstLoad = true;
   bool followButtonClicked = false;
   int postCount = 0;
-  List<Image> userPosts = []; //should be filled by backend
+  List<Container> userPosts = []; //should be filled by backend
   UserClass currentProfile;
   String profileowneruid;
   String logineduseruid;

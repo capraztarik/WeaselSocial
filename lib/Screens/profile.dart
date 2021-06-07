@@ -91,7 +91,7 @@ class _ProfilePage extends State<ProfilePage>
       QuerySnapshot querySnapshot =
       await FirebaseFirestore.instance.collection("posts").get();
       for (int i = 0; i < querySnapshot.docs.length; i++) {
-        if(currentUserModel.uid == querySnapshot.docs[i]["ownerId"])
+        if(profileowneruid == querySnapshot.docs[i]["ownerId"])
           {
             Image temp = Image.network(querySnapshot.docs[i]["mediaUrl"]);
             userPosts.add(
@@ -167,6 +167,7 @@ class _ProfilePage extends State<ProfilePage>
       "type": "follow",
       "userProfileImg": currentUserModel.photoUrl,
       "timestamp": Timestamp.now(),
+      "mediaUrl" : ""
     });
     setState(() {
       updateUser();
@@ -189,6 +190,7 @@ class _ProfilePage extends State<ProfilePage>
       "type": "followrequest",
       "userProfileImg": currentUserModel.photoUrl,
       "timestamp": Timestamp.now(),
+      "mediaUrl" : ""
     });
     //updates activity feed
     setState(() {
@@ -430,13 +432,21 @@ class _ProfilePage extends State<ProfilePage>
                                 )
                               ],
                             )
-                          : GridView.count(
+                          : (userPosts.length != 0) ? GridView.count(
                               crossAxisCount: 3,
                               crossAxisSpacing: 2.5,
                               mainAxisSpacing: 1.15,
                               shrinkWrap: true,
                               children: userPosts,
-                            ),
+                            )
+                      :
+                      Center(
+                        child: Text(
+                          "No posts to show",
+                          style: TextStyle(
+                            fontSize: 25
+                          ),
+                        ),),
                     ),
                   ]),
             );

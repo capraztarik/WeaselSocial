@@ -101,6 +101,7 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
         await usersReference.doc(currentUserModel.uid).get();
     followingUsers = docSnapshot.data();
     followingUsers = followingUsers["followings"];
+    followingUsers.removeWhere((key, value) => value == false);
   }
 
   Future<void> getPosts() async {

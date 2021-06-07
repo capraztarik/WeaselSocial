@@ -19,7 +19,7 @@ class notification_info {
   factory notification_info.fromDocument(DocumentSnapshot document) {
       return notification_info(
           username: document['username'],
-          photoUrl:document['mediaUrl'],
+          photoUrl: document['mediaUrl'] ?? "",
           notificationType:document['type'],
           uid:document['userId'],
           profilePhotoUrl:document['userProfileImg']);

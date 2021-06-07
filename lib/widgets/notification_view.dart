@@ -82,27 +82,31 @@ class _NotificationCard extends State<NotificationCard> {
       return buildFollowIcon();
     }
     else if(notificationType=="followrequest"){
-      return Row(
-          children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.check_circle_rounded,color: _iconColor),
-              onPressed: () {
-              setState(() {
-                _iconColor = Colors.green;
-                 acceptRequest();
-              });
-            },
-            ),
-            IconButton(
-              icon: Icon(Icons.do_not_disturb,color: _iconColor),
-              onPressed: () {
+      return Container(
+        height: 50,
+        width: 100,
+        child: Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.check_circle_rounded,color: _iconColor),
+                onPressed: () {
                 setState(() {
-                  _iconColor = Colors.red;
-                  unfollow();
+                  _iconColor = Colors.green;
+                   acceptRequest();
                 });
               },
-            ),
-          ]
+              ),
+              IconButton(
+                icon: Icon(Icons.do_not_disturb,color: _iconColor),
+                onPressed: () {
+                  setState(() {
+                    _iconColor = Colors.red;
+                    unfollow();
+                  });
+                },
+              ),
+            ]
+        ),
       );
     }
   }

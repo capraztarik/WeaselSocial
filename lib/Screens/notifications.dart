@@ -52,6 +52,7 @@ class _NotificationsState extends State<Notifications>
 
   _generateNotifications(List<notification_info> notificationList) {
     /* TODO Generates notifCards(view) with information taken from backend*/
+    notificationCardList.clear();
     int index = 0;
     while (index < notificationList.length) {
       NotificationCard temp = NotificationCard(
@@ -86,9 +87,10 @@ class _NotificationsState extends State<Notifications>
   }
 
   _getNotifications() async {
+    notificationList.clear();
 
     QuerySnapshot querySnapshot =
-    await FirebaseFirestore.instance.collection("notifications").doc(currentUserModel.uid).collection("items").get();
+    await FirebaseFirestore.instance.collection("notifications").doc(currentUserModel.uid).collection("items").orderBy("timestamp", descending: true).get();
     for (int i = 0; i < querySnapshot.docs.length ?? 0; i++) {
       notification_info temp = notification_info.fromDocument(querySnapshot.docs[i]);
       notificationList.add(temp);

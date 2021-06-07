@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:weasel_social_media_app/main.dart';
 import 'package:weasel_social_media_app/widgets/post_view.dart';
 import '../models/userclass.dart';
+import 'followers view.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({this.uid});
@@ -21,17 +22,17 @@ class _ProfilePage extends State<ProfilePage>
   bool firstLoad = true;
   bool followButtonClicked = false;
   int postCount = 0;
-  List<Image> userPosts = []; //should be filled by backend
+  List<Container> userPosts = []; //should be filled by backend
   UserClass currentProfile;
   String profileowneruid;
   String logineduseruid;
+
   @override
   void initState() {
     super.initState();
-    this._getUserPosts();
     postCount = userPosts.length ?? 0;
     _setCurrentScreen();
-    getUserCred().whenComplete(() => setState(() {
+    initialFunction().whenComplete(() => setState(() {
           firstLoad = false;
         }));
   }
@@ -41,6 +42,12 @@ class _ProfilePage extends State<ProfilePage>
     currentProfile = UserClass.fromDocument(userRecord);
     profileowneruid = widget.uid;
     logineduseruid = currentUserModel.uid;
+  }
+
+  Future<void> initialFunction() async {
+    await updateUser();
+    await getUserCred();
+    await getUserPosts();
   }
 
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -75,18 +82,30 @@ class _ProfilePage extends State<ProfilePage>
     currentUserModel = UserClass.fromDocument(userRecord);
   }
 
-  _getUserPosts() async {
+  Future<void> getUserPosts()  async {
     //should get UserPosts from backend
     print("Starting getting Posts");
     _setLogEvent("Profile", "Profile posts fetched.");
-    Image temp = Image.network(
-        "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg");
 
-    for (int x = 0; x < 13; x++) {
-      userPosts.add(temp);
-    }
+      QuerySnapshot querySnapshot =
+      await FirebaseFirestore.instance.collection("posts").get();
+      for (int i = 0; i < querySnapshot.docs.length; i++) {
+        if(currentUserModel.uid == querySnapshot.docs[i]["ownerId"])
+          {
+            Image temp = Image.network(querySnapshot.docs[i]["mediaUrl"]);
+            userPosts.add(
+              Container(
+                height: 30,
+                width: 30,
+                child: temp
+              )
+            );
+          }
+      }
 
-    setState(() {});
+    setState(() {
+      postCount = userPosts.length ?? 0;
+    });
   }
 
   editProfile() {
@@ -114,7 +133,6 @@ class _ProfilePage extends State<ProfilePage>
         .doc(profileowneruid)
         .update({'followers.$logineduseruid': false});
 
-    /*TODO*/
     /* delete her items from feed
        FirebaseFirestore.instance
         .collection("insta_a_feed")
@@ -153,19 +171,6 @@ class _ProfilePage extends State<ProfilePage>
       "timestamp": Timestamp.now(),
     });
     //updates activity feed
-    /*FirebaseFirestore.instance
-            .collection("insta_a_feed")
-            .doc(profileId)
-            .collection("items")
-            .doc(currentUserId)
-            .set({
-          "ownerId": profileId,
-          "username": currentUserModel.username,
-          "userId": currentUserId,
-          "type": "follow",
-          "userProfileImg": currentUserModel.photoUrl,
-          "timestamp": DateTime.now()
-        });*/
     setState(() {
       updateUser();
     });
@@ -320,7 +325,8 @@ class _ProfilePage extends State<ProfilePage>
                                   child: buildStatColumn("followers",
                                       _countFollowings(currentProfile.followers)),
                                   onTap: () {
-                                    Navigator.pushNamed(context, '/followers');
+                                    Navigator.push(
+                                        context, MaterialPageRoute(builder: (context) => Followers_view()));
                                   },
                                 ),
                                 buildStatColumn(
@@ -386,8 +392,8 @@ class _ProfilePage extends State<ProfilePage>
                             )
                           : GridView.count(
                               crossAxisCount: 3,
-                              crossAxisSpacing: 1.5,
-                              mainAxisSpacing: 0.10,
+                              crossAxisSpacing: 2.5,
+                              mainAxisSpacing: 1.15,
                               shrinkWrap: true,
                               children: userPosts,
                             ),

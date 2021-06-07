@@ -28,7 +28,7 @@ class _Followers_viewState extends State<Followers_view>
     _setCurrentScreen();
     initialFunction().whenComplete(() => setState(() {
       firstLoad = false;
-    }));;
+    }));
   }
 
   Future<void> _setLogEvent(String name, String action) async {
@@ -42,7 +42,7 @@ class _Followers_viewState extends State<Followers_view>
   Future<void> initialFunction() async {
     await getuser();
     await _getFollowers();
-    await _getFollowings();
+    //await _getFollowings();
   }
 
   Future<void> _setCurrentScreen() async {
@@ -127,7 +127,6 @@ class _Followers_viewState extends State<Followers_view>
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     super.build(context);
     if (firstLoad) {
@@ -159,7 +158,7 @@ class _Followers_viewState extends State<Followers_view>
   Future<Null> _refresh() async {
     await getuser();
     await _getFollowers();
-    await _getFollowings();
+    //await _getFollowings();
     await _generateFollowers;
 
     _setLogEvent("_getFollowers, getFollowings", "Following ans Followers refreshed.");

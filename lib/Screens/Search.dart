@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
-import 'package:weasel_social_media_app/models/post_info.dart';
 import 'package:weasel_social_media_app/models/userclass.dart';
 import '../Utilities/custom_search_delegates.dart';
 import 'package:toggle_switch/toggle_switch.dart';

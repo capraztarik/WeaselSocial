@@ -80,13 +80,14 @@ class _PostCard extends State<PostCard> {
 
     super.initState();
   }*/
-  @override
+  /*@override
   void dispose() {
     // Ensure disposing of the VideoPlayerController to free up resources.
     _cameraVideoPlayerController.dispose();
 
     super.dispose();
-  }
+  }*/
+
   GestureDetector buildLikeIcon() {
     Color color;
     IconData icon;

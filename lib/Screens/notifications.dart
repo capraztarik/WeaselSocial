@@ -17,11 +17,19 @@ class _NotificationsState extends State<Notifications>
   List<NotificationCard> notificationCardList = []; //views that we generated.
   List<notification_info> notificationList = []; //info taken from backend
   bool finished=false;
+  bool firstLoad = true;
 
   void initState() {
     super.initState();
     this._getNotifications();
     _setCurrentScreen();
+    initialFunction().whenComplete(() => setState(() {
+      firstLoad = false;
+    }));
+  }
+
+  Future<void> initialFunction() async {
+    await _getNotifications();
   }
 
   Future<void> _setLogEvent(String name, String action) async {
@@ -81,7 +89,7 @@ class _NotificationsState extends State<Notifications>
 
     QuerySnapshot querySnapshot =
     await FirebaseFirestore.instance.collection("notifications").doc(currentUserModel.uid).collection("items").get();
-    for (int i = 0; i < querySnapshot.docs.length; i++) {
+    for (int i = 0; i < querySnapshot.docs.length ?? 0; i++) {
       notification_info temp = notification_info.fromDocument(querySnapshot.docs[i]);
       notificationList.add(temp);
     }
@@ -94,21 +102,30 @@ class _NotificationsState extends State<Notifications>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white30,
-        title: Text(
-          "Weasel",
-          style: TextStyle(
-            color: Colors.black87,
+    if (firstLoad) {
+      return Scaffold(
+          body: SafeArea(
+            child: Center(
+                child: Container(
+                    height: 50, width: 50, child: CircularProgressIndicator())),
+          ));
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white30,
+          title: Text(
+            "Weasel",
+            style: TextStyle(
+              color: Colors.black87,
+            ),
           ),
         ),
-      ),
-      body: RefreshIndicator(
-        onRefresh: _refresh,
-        child: buildNotifications(),
-      ),
-    );
+        body: RefreshIndicator(
+          onRefresh: _refresh,
+          child: buildNotifications(),
+        ),
+      );
+    }
   }
 
   Future<Null> _refresh() async {

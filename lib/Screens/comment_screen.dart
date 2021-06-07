@@ -61,14 +61,13 @@ class _CommentScreenState extends State<CommentScreen> {
             controller: _commentController,
             decoration: InputDecoration(labelText: 'Write a comment...'),
           ),
-          trailing: OutlineButton(
+          trailing: TextButton(
             onPressed: () {
               if (_commentController.text != "")
                 addComment(_commentController.text);
               else
                 showAlertDialog("Error", "Comment can't be empty");
             },
-            borderSide: BorderSide.none,
             child: Text("Post"),
           ),
         ),

@@ -7,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
 import 'package:weasel_social_media_app/main.dart';
-import 'package:path/path.dart' as Path;
 import 'package:weasel_social_media_app/models/userclass.dart';
 
 class EditProfile extends StatefulWidget {

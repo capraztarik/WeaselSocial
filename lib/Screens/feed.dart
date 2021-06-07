@@ -128,23 +128,6 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
     print("Starting getFeed");
     _setLogEvent("Feed", "Posts refreshed.");
     /*post info list taken from backend would given to generatefeed with postList*/
-    /*PostInfo temp = PostInfo(
-        username: "mesutozil",
-        caption: "ThrowBack Thursday",
-        photoUrl:
-            "https://www.yenicaggazetesi.com.tr/d/other/esgxywducae-yho.jpg",
-        profilePhotoUrl:
-            "https://i12.haber7.net//haber/haber7/photos/2021/11/devrekliler_maci_mesut_ozilin_locasindan_izledi_1615873131_6892.jpg",
-        likeCount: 59,
-        uid: "USM7K6scz1ZlrC0kfMg6VWNj0Xc2");
-    PostInfo temp2 = PostInfo(
-        username: "neymar",
-        caption: "Psg is the best",
-        photoUrl: "https://www.trtspor.com.tr/resimler/366000/366896.jpg",
-        profilePhotoUrl:
-            "https://www.trtspor.com.tr/resimler/366000/366896.jpg",
-        likeCount: 88,
-        uid: "USM7K6scz1ZlrC0kfMg6VWNj0Xc*/
     int length = allPostList.length ?? 0;
     for (int x = 0; x < length; x++) {
       if (followingUsers.containsKey(allPostList[x].uid)) {

@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:weasel_social_media_app/Utilities/color.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
 import 'package:weasel_social_media_app/main.dart';

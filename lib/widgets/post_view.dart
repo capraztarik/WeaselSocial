@@ -152,7 +152,8 @@ class _PostCard extends State<PostCard> {
           onTap: () =>  _cameraVideoPlayerController.play(),
           onTapCancel:() =>_cameraVideoPlayerController.pause(),
           child: VideoPlayer(_cameraVideoPlayerController),
-        ); });
+        );
+        });
       });
     }
 

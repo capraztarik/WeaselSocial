@@ -71,10 +71,10 @@ class _Followers_viewState extends State<Followers_view>
         }
       }
     }
-    _generateFollowers(followerUsersfinal);
+    generateFollowers(followerUsersfinal);
   }
 
-  _generateFollowers(List<UserClass> followerUsersfinal) {
+  generateFollowers(List<UserClass> followerUsersfinal) {
     /* TODO Generates notifCards(view) with information taken from backend*/
     int index = 0;
     while (index < followerUsersfinal.length) {
@@ -159,7 +159,7 @@ class _Followers_viewState extends State<Followers_view>
     await getuser();
     await _getFollowers();
     //await _getFollowings();
-    await _generateFollowers;
+    generateFollowers(followerUsersfinal);
 
     _setLogEvent("_getFollowers, getFollowings", "Following ans Followers refreshed.");
 

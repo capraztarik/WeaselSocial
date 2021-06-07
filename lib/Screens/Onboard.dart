@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weasel_social_media_app/Screens/welcome.dart';
 import '../Utilities/color.dart';
-import 'package:after_layout/after_layout.dart';
 
 class Onboard extends StatefulWidget {
   @override

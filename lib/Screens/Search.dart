@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
+import 'package:weasel_social_media_app/models/post_info.dart';
 import 'package:weasel_social_media_app/models/userclass.dart';
+import 'package:weasel_social_media_app/widgets/post_view.dart';
 import '../Utilities/custom_search_delegates.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
+import '../main.dart';
 import 'profile.dart';
 
 class SearchPage extends StatefulWidget {
@@ -19,48 +22,6 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   List<UserClass> userList = [];
-  List postList = [
-    {
-      "id": 1,
-      "name": "abidin",
-      "profilepicture":
-          "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
-      "postpicture":
-          "https://www.eea.europa.eu/themes/biodiversity/state-of-nature-in-the-eu/state-of-nature-2020-subtopic/image_large"
-    },
-    {
-      "id": 1,
-      "name": "abidin",
-      "profilepicture":
-          "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
-      "postpicture":
-          "https://www.eea.europa.eu/themes/biodiversity/state-of-nature-in-the-eu/state-of-nature-2020-subtopic/image_large"
-    },
-    {
-      "id": 1,
-      "name": "abidin",
-      "profilepicture":
-          "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
-      "postpicture":
-          "https://www.eea.europa.eu/themes/biodiversity/state-of-nature-in-the-eu/state-of-nature-2020-subtopic/image_large"
-    },
-    {
-      "id": 1,
-      "name": "abidin",
-      "profilepicture":
-          "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
-      "postpicture":
-          "https://www.eea.europa.eu/themes/biodiversity/state-of-nature-in-the-eu/state-of-nature-2020-subtopic/image_large"
-    },
-    {
-      "id": 1,
-      "name": "abidin",
-      "profilepicture":
-          "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
-      "postpicture":
-          "https://www.eea.europa.eu/themes/biodiversity/state-of-nature-in-the-eu/state-of-nature-2020-subtopic/image_large"
-    }
-  ];
   Future<QuerySnapshot> userDocs;
 
   void initState() {
@@ -91,7 +52,7 @@ class _SearchPageState extends State<SearchPage> {
     return AnimatedCrossFade(
       duration: const Duration(milliseconds: 500),
       firstChild: userSearchView(widget.query),
-      secondChild: postSearchView(postList),
+      secondChild: postSearchView(widget.query),
       crossFadeState:
           boolState ? CrossFadeState.showSecond : CrossFadeState.showFirst,
     );
@@ -191,19 +152,62 @@ Widget userSearchView(String query) {
       });
 }
 
-Widget postSearchView(var postList) {
-  final ScrollController controller = new ScrollController();
-  return ListView.builder(
-    //physics: AlwaysScrollableScrollPhysics(),
-    controller: controller,
-    shrinkWrap: true,
-    scrollDirection: Axis.vertical,
-    itemCount: postList.length,
-    itemBuilder: (context, i) {
-      return postSearchUI(postList[i]["id"], postList[i]["name"],
-          postList[i]["profilepicture"], postList[i]["postpicture"]);
-    },
-  );
+Widget postSearchView(String query) {
+  List<PostCard> feedData = [];
+  List<PostInfo> searchedPostList = [];
+
+  List<PostCard> _generateFeed(List<PostInfo> postList) {
+    /*Generates postCards(view) with information taken from backend*/
+    int index = 0;
+    List<PostCard> feedData = [];
+    while (index < postList.length) {
+      PostCard temp = PostCard(
+        username: postList[index].username ?? "",
+        pid: postList[index].pid ?? "",
+        uid: postList[index].uid ?? "",
+        caption: postList[index].caption ?? "",
+        mediaUrl: postList[index].photoUrl ?? "",
+        profilePhotoUrl: postList[index].profilePhotoUrl ?? "",
+        isLiked: (postList[index].likerList.contains(currentUserModel.uid)),
+        likeCount: postList[index].likerList.length ?? 0,
+      );
+      feedData.add(temp);
+      index++;
+    }
+    return feedData;
+  }
+
+  return StreamBuilder<QuerySnapshot>(
+      stream: (query != " " && query != null)
+          ? FirebaseFirestore.instance
+              .collection('posts')
+              .where('description', isGreaterThanOrEqualTo: query)
+              .where('description', isLessThan: query + 'z')
+              .snapshots()
+          : FirebaseFirestore.instance.collection("posts").snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+              height: MediaQuery.of(context).size.height - 200,
+              child: Center(child: CircularProgressIndicator()));
+        } else
+          print("done");
+        QuerySnapshot querySnapshot = snapshot.data;
+        searchedPostList.clear();
+        feedData.clear();
+        for (int i = 0; i < querySnapshot.docs.length ?? 0; i++) {
+          PostInfo temp = PostInfo.fromDocument(querySnapshot.docs[i]);
+          searchedPostList.add(temp);
+        }
+        feedData = _generateFeed(searchedPostList);
+        ScrollController _controller = new ScrollController();
+        return ListView(
+          scrollDirection: Axis.vertical,
+          controller: _controller,
+          shrinkWrap: true,
+          children: feedData,
+        );
+      });
 }
 
 Widget userSearchUI(
@@ -225,28 +229,26 @@ Widget userSearchUI(
                       ),
                     );
                   },
-                  child: Row(
-                    children: <Widget>[
-                        Container(
-                        width: 55,
-                        height: 55,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: NetworkImage('$imageUrl'),
-                            fit: BoxFit.fill,
-                          ),
+                  child: Row(children: <Widget>[
+                    Container(
+                      width: 55,
+                      height: 55,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage('$imageUrl'),
+                          fit: BoxFit.fill,
                         ),
                       ),
-                          Padding(
-                        padding: EdgeInsets.all(5.0),
                     ),
-                          Text(
+                    Padding(
+                      padding: EdgeInsets.all(5.0),
+                    ),
+                    Text(
                       '$name',
                       style: kTextStyle,
                     ),
-                  ]
-                  ),
+                  ]),
                 )
               ],
             ),

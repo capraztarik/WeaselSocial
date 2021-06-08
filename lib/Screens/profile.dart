@@ -19,8 +19,8 @@ class _ProfilePage extends State<ProfilePage>
     with AutomaticKeepAliveClientMixin<ProfilePage> {
   //String currentUserId
   bool isFollowing = false;
-  bool isFollowRequest=false;
-  bool isPrivate=false;
+  bool isFollowRequest = false;
+  bool isPrivate = false;
   bool firstLoad = true;
   bool followButtonClicked = false;
   int postCount = 0;
@@ -83,26 +83,28 @@ class _ProfilePage extends State<ProfilePage>
     currentUserModel = UserClass.fromDocument(userRecord);
   }
 
-  Future<void> getUserPosts()  async {
+  Future<void> getUserPosts() async {
     //should get UserPosts from backend
     print("Starting getting Posts");
     _setLogEvent("Profile", "Profile posts fetched.");
 
-      QuerySnapshot querySnapshot =
-      await FirebaseFirestore.instance.collection("posts").get();
-      for (int i = 0; i < querySnapshot.docs.length; i++) {
-        if(profileowneruid == querySnapshot.docs[i]["ownerId"])
-          {
-            Image temp = Image.network(querySnapshot.docs[i]["mediaUrl"]);
-            userPosts.add(
-              Container(
-                height: 30,
-                width: 30,
-                child: temp
-              )
-            );
-          }
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection("posts").get();
+    for (int i = 0; i < querySnapshot.docs.length; i++) {
+      if (profileowneruid == querySnapshot.docs[i]["ownerId"]) {
+        //Image temp = Image.network(querySnapshot.docs[i]["mediaUrl"]);
+        userPosts.add(Container(
+          height: 20,
+          width: 25,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(querySnapshot.docs[i]["mediaUrl"]),
+            ),
+          ),
+        ));
       }
+    }
 
     setState(() {
       postCount = userPosts.length ?? 0;
@@ -167,12 +169,13 @@ class _ProfilePage extends State<ProfilePage>
       "type": "follow",
       "userProfileImg": currentUserModel.photoUrl,
       "timestamp": Timestamp.now(),
-      "mediaUrl" : ""
+      "mediaUrl": ""
     });
     setState(() {
       updateUser();
     });
   }
+
   followRequest() {
     print('following requested');
     setState(() {
@@ -190,7 +193,7 @@ class _ProfilePage extends State<ProfilePage>
       "type": "followrequest",
       "userProfileImg": currentUserModel.photoUrl,
       "timestamp": Timestamp.now(),
-      "mediaUrl" : ""
+      "mediaUrl": ""
     });
     //updates activity feed
     setState(() {
@@ -268,7 +271,7 @@ class _ProfilePage extends State<ProfilePage>
         }
 
         // does not follow user - should show follow button
-        if (!isFollowing &&!isPrivate) {
+        if (!isFollowing && !isPrivate) {
           return buildFollowButton(
             text: "Follow",
             backgroundcolor: Colors.blue,
@@ -277,7 +280,7 @@ class _ProfilePage extends State<ProfilePage>
             function: followUser,
           );
         }
-        if (!isFollowing &&isPrivate) {
+        if (!isFollowing && isPrivate) {
           return buildFollowButton(
             text: "Request Follow.",
             backgroundcolor: Colors.blue,
@@ -315,8 +318,8 @@ class _ProfilePage extends State<ProfilePage>
                   child: CircularProgressIndicator());
 
             UserClass profileOwner = UserClass.fromDocument(snapshot.data);
-            if(profileOwner.isPrivate){
-              isPrivate=true;
+            if (profileOwner.isPrivate) {
+              isPrivate = true;
             }
             if (profileOwner.followers.containsKey(currentUserModel.uid) &&
                 profileOwner.followers[currentUserModel.uid] == true &&
@@ -364,11 +367,16 @@ class _ProfilePage extends State<ProfilePage>
                                 SizedBox(width: 12),
                                 buildStatColumn("posts", postCount),
                                 GestureDetector(
-                                  child: buildStatColumn("followers",
-                                      _countFollowings(currentProfile.followers)),
+                                  child: buildStatColumn(
+                                      "followers",
+                                      _countFollowings(
+                                          currentProfile.followers)),
                                   onTap: () {
                                     Navigator.push(
-                                        context, MaterialPageRoute(builder: (context) => Followers_view()));
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Followers_view()));
                                   },
                                 ),
                                 buildStatColumn(
@@ -399,6 +407,9 @@ class _ProfilePage extends State<ProfilePage>
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.only(top: 1.0, left: 10.0),
                       child: Text(currentProfile.bio),
+                    ),
+                    SizedBox(
+                      height: 20,
                     ),
                     Expanded(
                       child: (currentProfile.isPrivate &&
@@ -432,21 +443,21 @@ class _ProfilePage extends State<ProfilePage>
                                 )
                               ],
                             )
-                          : (userPosts.length != 0) ? GridView.count(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 2.5,
-                              mainAxisSpacing: 1.15,
-                              shrinkWrap: true,
-                              children: userPosts,
-                            )
-                      :
-                      Center(
-                        child: Text(
-                          "No posts to show",
-                          style: TextStyle(
-                            fontSize: 25
-                          ),
-                        ),),
+                          : (userPosts.length != 0)
+                              ? GridView.count(
+                                  childAspectRatio: 1.1,
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 7,
+                                  mainAxisSpacing: 7,
+                                  shrinkWrap: true,
+                                  children: userPosts,
+                                )
+                              : Center(
+                                  child: Text(
+                                    "No posts to show",
+                                    style: TextStyle(fontSize: 25),
+                                  ),
+                                ),
                     ),
                   ]),
             );

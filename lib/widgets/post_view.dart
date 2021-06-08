@@ -4,6 +4,7 @@ import 'package:weasel_social_media_app/Screens/comment_screen.dart';
 import 'package:weasel_social_media_app/Screens/profile.dart';
 import 'package:weasel_social_media_app/main.dart';
 import 'package:video_player/video_player.dart';
+import 'package:weasel_social_media_app/models/post_info.dart';
 
 class PostCard extends StatefulWidget {
   const PostCard(
@@ -54,6 +55,7 @@ class _PostCard extends State<PostCard> {
   final String profilePhotoUrl;
   int likeCount = 0;
   bool liked = false;
+  List<PostInfo> allPostList = [];
   VideoPlayerController _cameraVideoPlayerController;
   String currentUserId = currentUserModel.uid;
   Future<void> _initializeVideoPlayerFuture;
@@ -115,6 +117,15 @@ class _PostCard extends State<PostCard> {
         });
   }
 
+  bool checkList(List<PostInfo> tempList) {
+    int index = tempList.indexWhere((element) =>
+        (element.uid == currentUserId && element.pid == widget.pid));
+    if (index == -1)
+      return false;
+    else
+      return true;
+  }
+
   void _likePost(/*String postId2*/) {
     //bool _liked = false;
 
@@ -159,23 +170,22 @@ class _PostCard extends State<PostCard> {
   }
 
   GestureDetector buildLikeableImage({String mediaUrl}) {
-    if(mediaUrl.contains('jpg')) {
+    if (mediaUrl.contains('jpg')) {
       return GestureDetector(
         onDoubleTap: () => _likePost(/*postId*/),
         child: Image.network(mediaUrl),
       );
-    }
-    else {
+    } else {
       _cameraVideoPlayerController = VideoPlayerController.network(mediaUrl);
       return GestureDetector(
         onDoubleTap: () => _likePost(),
-        onTap: () =>  _cameraVideoPlayerController.play(),
-        onTapCancel:() =>_cameraVideoPlayerController.pause(),
+        onTap: () => _cameraVideoPlayerController.play(),
+        onTapCancel: () => _cameraVideoPlayerController.pause(),
         child: AspectRatio(
-        aspectRatio: _cameraVideoPlayerController.value.aspectRatio,
-        // Use the VideoPlayer widget to display the video.
+          aspectRatio: _cameraVideoPlayerController.value.aspectRatio,
+          // Use the VideoPlayer widget to display the video.
           child: VideoPlayer(_cameraVideoPlayerController),
-      ),
+        ),
       );
 
       /*return GestureDetector(
@@ -202,9 +212,7 @@ class _PostCard extends State<PostCard> {
         ),
     );*/
     }
-
   }
-
 
   buildPostHeader({String ownerId, String profilePhotoUrl}) {
     if (ownerId == null) {
@@ -288,6 +296,52 @@ class _PostCard extends State<PostCard> {
                     ),
                   );
                 }),
+            Padding(padding: const EdgeInsets.only(right: 20.0)),
+            GestureDetector(
+                child: const Icon(
+                  Icons.repeat,
+                  size: 25.0,
+                ),
+                onTap: () async {
+                  allPostList.clear();
+                  var reference =
+                      FirebaseFirestore.instance.collection('posts');
+                  QuerySnapshot querySnapshot = await reference.get();
+
+                  for (int i = 0; i < querySnapshot.docs.length; i++) {
+                    PostInfo temp =
+                        PostInfo.fromDocument(querySnapshot.docs[i]);
+                    allPostList.add(temp);
+                  }
+
+                  if (!checkList(allPostList)) {
+                    print("Post reshared");
+                    reference.add({
+                      "username": currentUserModel.username,
+                      "likes": [],
+                      "comments": {},
+                      "mediaUrl": widget.mediaUrl,
+                      "description": widget.caption,
+                      "ownerId": currentUserModel.uid,
+                      "profilePhotoUrl": currentUserModel.photoUrl,
+                      "timestamp": DateTime.now(),
+                    }).then((DocumentReference doc) {
+                      String docId = doc.id;
+                      reference.doc(docId).update({"postId": widget.pid});
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        duration: Duration(seconds: 4),
+                        content: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Post successfully reshared",
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ])));
+                  } else
+                    print("Post already exists");
+                })
           ],
         ),
         Row(

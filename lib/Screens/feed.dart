@@ -105,8 +105,10 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
   }
 
   Future<void> getPosts() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection("posts").get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("posts")
+        .orderBy("timestamp", descending: true)
+        .get();
     for (int i = 0; i < querySnapshot.docs.length; i++) {
       PostInfo temp = PostInfo.fromDocument(querySnapshot.docs[i]);
       allPostList.add(temp);
@@ -132,20 +134,11 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
     int length = allPostList.length ?? 0;
     for (int x = 0; x < length; x++) {
       if (followingUsers.containsKey(allPostList[x].uid)) {
-        if (checkDuplicate(allPostList[x], postList)) {
-          postList.add(allPostList[x]);
-        }
+        postList.add(allPostList[x]);
       }
     }
     _generateFeed(postList);
     setState(() {});
-  }
-
-  bool checkDuplicate(PostInfo temp, List<PostInfo> postList) {
-    for (int x = 0; x < postList.length; x++) {
-      if (postList[x].pid == temp.pid) return false;
-    }
-    return true;
   }
 
   @override

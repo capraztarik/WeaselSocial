@@ -127,16 +127,17 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
   }
 
   Future<void> _getFeed() async {
-    /*TODO this would get feed info from backend then give it to generate feed*/
     print("Starting getFeed");
     _setLogEvent("Feed", "Posts refreshed.");
     /*post info list taken from backend would given to generatefeed with postList*/
     int length = allPostList.length ?? 0;
     for (int x = 0; x < length; x++) {
-      if (followingUsers.containsKey(allPostList[x].uid)) {
+      if (followingUsers.containsKey(allPostList[x].uid) ||
+          allPostList[x].uid == currentUserModel.uid) {
         postList.add(allPostList[x]);
       }
     }
+    for (int x = 0; x < length; x++) {}
     _generateFeed(postList);
     setState(() {});
   }
@@ -145,7 +146,6 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
   bool get wantKeepAlive => true;
 
   _generateFeed(List<PostInfo> postList) {
-    /* TODO Generates postCards(view) with information taken from backend*/
     int index = 0;
     while (index < postList.length) {
       PostCard temp = PostCard(

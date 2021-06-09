@@ -104,7 +104,7 @@ class _SearchPageState extends State<SearchPage> {
                 activeFgColor: Colors.black87,
                 inactiveBgColor: Colors.white,
                 inactiveFgColor: Colors.black87,
-                labels: ['Username', 'Post Content'],
+                labels: ['Username', 'Explore'],
                 onToggle: (index) {
                   print('switched to: $index');
                   setState(() {
@@ -184,7 +184,10 @@ Widget postSearchView(String query) {
               .where('description', isGreaterThanOrEqualTo: query)
               .where('description', isLessThan: query + 'z')
               .snapshots()
-          : FirebaseFirestore.instance.collection("posts").snapshots(),
+          : FirebaseFirestore.instance
+              .collection("posts")
+              .orderBy("timestamp", descending: true)
+              .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(

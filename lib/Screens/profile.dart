@@ -8,10 +8,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:weasel_social_media_app/main.dart';
+import 'package:weasel_social_media_app/models/post_info.dart';
 import 'package:weasel_social_media_app/widgets/post_view.dart';
 import '../models/userclass.dart';
 import 'followers view.dart';
 import 'following view.dart';
+
+List<PostInfo> userPostList12 = [];
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({this.uid});
@@ -33,6 +36,7 @@ class _ProfilePage extends State<ProfilePage>
   UserClass currentProfile;
   String profileowneruid;
   String logineduseruid;
+
   @override
   void initState() {
     super.initState();
@@ -89,6 +93,7 @@ class _ProfilePage extends State<ProfilePage>
   }
 
   Future<void> getUserPosts() async {
+    userPostList12.clear();
     //should get UserPosts from backend
     print("Starting getting Posts");
     _setLogEvent("Profile", "Profile posts fetched.");
@@ -100,6 +105,8 @@ class _ProfilePage extends State<ProfilePage>
     for (int i = 0; i < querySnapshot.docs.length; i++) {
       if (profileowneruid == querySnapshot.docs[i]["ownerId"]) {
         String url = querySnapshot.docs[i]["mediaUrl"];
+        PostInfo temp = PostInfo.fromDocument(querySnapshot.docs[i]);
+        userPostList12.add(temp);
         if (url.contains("mp4")) {
           print("video");
           final path = await VideoThumbnail.thumbnailFile(

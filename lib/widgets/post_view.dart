@@ -349,7 +349,7 @@ class _PostCard extends State<PostCard> {
                       "timestamp": DateTime.now(),
                     }).then((DocumentReference doc) {
                       String docId = doc.id;
-                      reference.doc(docId).update({"postId": widget.pid});
+                      reference.doc(docId).update({"postId": doc.id});
                     });
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         duration: Duration(seconds: 4),

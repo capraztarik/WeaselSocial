@@ -8,7 +8,8 @@ import 'dart:io';
 import '../main.dart';
 
 File file;
-bool isVideo=false;
+bool isVideo = false;
+
 class Uploader extends StatefulWidget {
   _Uploader createState() => _Uploader();
 }
@@ -85,6 +86,26 @@ class _Uploader extends State<Uploader> {
   }
 
   //method to build buttons with location.
+
+  void postToFireStore(
+      {String mediaUrl, String location, String description}) async {
+    var reference = FirebaseFirestore.instance.collection('posts');
+
+    reference.add({
+      "username": currentUserModel.username,
+      "likes": [],
+      "comments": {},
+      "mediaUrl": mediaUrl,
+      "description": description,
+      "ownerId": currentUserModel.uid,
+      "profilePhotoUrl": currentUserModel.photoUrl,
+      "timestamp": DateTime.now(),
+    }).then((DocumentReference doc) {
+      String docId = doc.id;
+      reference.doc(docId).update({"postId": docId});
+    });
+    showAlertDialog("Success", "Post successfully shared.");
+  }
 
   void clearImage() {
     setState(() {
@@ -168,11 +189,11 @@ class _PostFormState extends State<PostForm> {
                 onPressed: () async {
                   Navigator.of(context).pop();
                   PickedFile imageFile = await imagePicker.getVideo(
-                      source: ImageSource.gallery,
-                      );
+                    source: ImageSource.gallery,
+                  );
                   setState(() {
                     file = File(imageFile.path);
-                    isVideo=true;
+                    isVideo = true;
                   });
                 }),
             SimpleDialogOption(
@@ -184,7 +205,7 @@ class _PostFormState extends State<PostForm> {
                   );
                   setState(() {
                     file = File(imageFile.path);
-                    isVideo=true;
+                    isVideo = true;
                   });
                 }),
             SimpleDialogOption(
@@ -234,7 +255,7 @@ class _PostFormState extends State<PostForm> {
                         image: DecorationImage(
                       fit: BoxFit.fill,
                       alignment: FractionalOffset.topCenter,
-                      image: (file == null || isVideo==true)
+                      image: (file == null || isVideo == true)
                           ? AssetImage("assets/images/add_photo.png")
                           : FileImage(file),
                     )),
@@ -251,38 +272,19 @@ class _PostFormState extends State<PostForm> {
 
 Future<String> uploadImage(var imageFile) async {
   var uuid = Uuid().v1();
-  if(isVideo){
-    Reference ref = FirebaseStorage.instance.ref().child("posts/post_$uuid.mp4");
+  if (isVideo) {
+    Reference ref =
+        FirebaseStorage.instance.ref().child("posts/post_$uuid.mp4");
+    UploadTask uploadTask = ref.putFile(imageFile);
+
+    String downloadUrl = await (await uploadTask).ref.getDownloadURL();
+    return downloadUrl;
+  } else {
+    Reference ref =
+        FirebaseStorage.instance.ref().child("posts/post_$uuid.jpg");
     UploadTask uploadTask = ref.putFile(imageFile);
 
     String downloadUrl = await (await uploadTask).ref.getDownloadURL();
     return downloadUrl;
   }
-  else{
-    Reference ref = FirebaseStorage.instance.ref().child("posts/post_$uuid.jpg");
-    UploadTask uploadTask = ref.putFile(imageFile);
-
-    String downloadUrl = await (await uploadTask).ref.getDownloadURL();
-    return downloadUrl;
-  }
-
-}
-
-void postToFireStore(
-    {String mediaUrl, String location, String description}) async {
-  var reference = FirebaseFirestore.instance.collection('posts');
-
-  reference.add({
-    "username": currentUserModel.username,
-    "likes": [],
-    "comments": {},
-    "mediaUrl": mediaUrl,
-    "description": description,
-    "ownerId": currentUserModel.uid,
-    "profilePhotoUrl": currentUserModel.photoUrl,
-    "timestamp": DateTime.now(),
-  }).then((DocumentReference doc) {
-    String docId = doc.id;
-    reference.doc(docId).update({"postId": docId});
-  });
 }

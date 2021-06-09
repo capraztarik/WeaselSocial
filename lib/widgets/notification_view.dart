@@ -43,6 +43,7 @@ class _NotificationCard extends State<NotificationCard> {
     this.notificationType,
     this.uid,
   });
+  Color _iconColor = Colors.black26;
 
   GestureDetector buildFollowIcon() {
     Color color;
@@ -78,7 +79,6 @@ class _NotificationCard extends State<NotificationCard> {
   }
 
   buildTrailer() {
-    Color _iconColor = Colors.black26;
     if (notificationType == "like" || notificationType == "comment") {
       return Image.network(photoUrl);
     } else if (notificationType == "follow") {
@@ -232,6 +232,8 @@ class _NotificationCard extends State<NotificationCard> {
     usersReference.doc(currentUserModel.uid).update({'followers.$uid': true});
     usersReference.doc(uid).update({'followings.$logineduseruid': true});
 
-    setState(() {});
+    setState(() {
+      _iconColor = Colors.green;
+    });
   }
 }

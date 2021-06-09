@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+import 'package:weasel_social_media_app/Screens/profile.dart';
 import 'package:weasel_social_media_app/Utilities/styles.dart';
 import 'package:weasel_social_media_app/main.dart';
 import 'package:weasel_social_media_app/models/userclass.dart';
@@ -109,6 +110,17 @@ class _EditProfile extends State<EditProfile> {
       DocumentSnapshot userRecord =
           await usersReference.doc(auth.currentUser.uid).get();
       currentUserModel = UserClass.fromDocument(userRecord);
+
+      for (int i = 0; i < userPostList12.length ?? 0; i++) {
+        if (userPostList12[i].uid == currentUserModel.uid) {
+          FirebaseFirestore.instance
+              .collection('posts')
+              .doc(userPostList12[i].pid)
+              .update({
+            "profilePhotoUrl": _uploadedFileURL ?? currentUserModel.photoUrl,
+          });
+        }
+      }
       changeSuccess = true;
     } else {
       changeSuccess = false;

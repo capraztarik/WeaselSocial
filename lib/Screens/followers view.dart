@@ -6,7 +6,6 @@ import 'package:weasel_social_media_app/main.dart';
 import 'package:weasel_social_media_app/models/userclass.dart';
 import 'package:weasel_social_media_app/widgets/Followers_view.dart';
 
-
 class Followers_view extends StatefulWidget {
   @override
   _Followers_viewState createState() => _Followers_viewState();
@@ -21,14 +20,14 @@ class _Followers_viewState extends State<Followers_view>
   List<UserClass> followingUsersfinal = [];
   bool firstLoad = true;
 
-  String id=currentUserModel.uid;
+  String id = currentUserModel.uid;
 
   void initState() {
     super.initState();
     _setCurrentScreen();
     initialFunction().whenComplete(() => setState(() {
-      firstLoad = false;
-    }));
+          firstLoad = false;
+        }));
   }
 
   Future<void> _setLogEvent(String name, String action) async {
@@ -64,11 +63,10 @@ class _Followers_viewState extends State<Followers_view>
   }
 
   _getFollowers() async {
-    for (int x = 0; x < AllUsers.length; x++) {
-      for (int y = 0; y < AllUsers[x].followings.length; y++) {
-        if (AllUsers[x].followings[y] == id) {
-          followerUsersfinal.add(AllUsers[x]);
-        }
+    List list = currentUserModel.followers.keys.toList() ?? [];
+    for (int x = 0; x < list.length; x++) {
+      for (int y = 0; y < AllUsers.length ?? 0; y++) {
+        if (list[x] == AllUsers[y].uid) followerUsersfinal.add(AllUsers[y]);
       }
     }
     generateFollowers(followerUsersfinal);
@@ -76,11 +74,11 @@ class _Followers_viewState extends State<Followers_view>
 
   generateFollowers(List<UserClass> followerUsersfinal) {
     /* TODO Generates notifCards(view) with information taken from backend*/
-      for (int x = 0; x < followerUsersfinal.length ?? 0; x++){
+    for (int x = 0; x < followerUsersfinal.length ?? 0; x++) {
       FollowersCard temp = FollowersCard(
         username: followerUsersfinal[x].username,
         profilePhotoUrl: followerUsersfinal[x].photoUrl,
-        uid:followerUsersfinal[x].uid,
+        uid: followerUsersfinal[x].uid,
       );
       followersCardList.add(temp);
     }
@@ -107,12 +105,9 @@ class _Followers_viewState extends State<Followers_view>
     } else {
       return Container(
           alignment: FractionalOffset.center,
-          child: Text(
-            'No followers to show.'
-          ));
+          child: Text('No followers to show.'));
     }
   }
-
 
   _getFollowings() async {
     for (int x = 0; x < AllUsers.length; x++) {
@@ -130,10 +125,10 @@ class _Followers_viewState extends State<Followers_view>
     if (firstLoad) {
       return Scaffold(
           body: SafeArea(
-            child: Center(
-                child: Container(
-                    height: 50, width: 50, child: CircularProgressIndicator())),
-          ));
+        child: Center(
+            child: Container(
+                height: 50, width: 50, child: CircularProgressIndicator())),
+      ));
     } else {
       return Scaffold(
         appBar: AppBar(
@@ -159,7 +154,8 @@ class _Followers_viewState extends State<Followers_view>
     //await _getFollowings();
     generateFollowers(followerUsersfinal);
 
-    _setLogEvent("_getFollowers, getFollowings", "Following ans Followers refreshed.");
+    _setLogEvent(
+        "_getFollowers, getFollowings", "Following ans Followers refreshed.");
 
     //setState(() {});
 

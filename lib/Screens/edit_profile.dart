@@ -23,8 +23,10 @@ class _EditProfile extends State<EditProfile> {
   ImagePicker imagePicker = ImagePicker();
   File _image;
   PickedFile imageFile;
-  String _uploadedFileURL;
+  String _uploadedFileURL = currentUserModel.photoUrl;
   final editKey = GlobalKey<FormState>();
+  List<UserClass> allUsers = [];
+  bool changeSuccess = false;
 
   Future<void> _setLogEvent(String name, String action) async {
     await FirebaseAnalytics()
@@ -41,6 +43,33 @@ class _EditProfile extends State<EditProfile> {
     print('setCurrentScreen succeeded');
   }
 
+  Future<void> showAlertDialog() async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false, //User must tap button
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error!"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  Text(
+                      "Username already exists. Please try with a different username."),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   Future<String> uploadImage(var imageFile) async {
     var uuid = Uuid().v1();
     Reference ref =
@@ -51,21 +80,40 @@ class _EditProfile extends State<EditProfile> {
     return downloadUrl;
   }
 
-  applyChanges() async {
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(currentUserModel.uid)
-        .update({
-      "username": username,
-      "name": displayname,
-      "bio": bio,
-      "isPrivate": isPrivate,
-      "profile_picture": _uploadedFileURL ?? currentUserModel.photoUrl,
-    });
+  Future<void> getUsers() async {
+    QuerySnapshot querySnapshot = await usersReference.get();
+    for (int i = 0; i < querySnapshot.docs.length; i++) {
+      UserClass temp = UserClass.fromDocument(querySnapshot.docs[i]);
+      allUsers.add(temp);
+    }
+  }
 
-    DocumentSnapshot userRecord =
-        await usersReference.doc(auth.currentUser.uid).get();
-    currentUserModel = UserClass.fromDocument(userRecord);
+  Future<void> applyChanges() async {
+    bool flag = true;
+    await getUsers();
+    for (int x = 0; x < allUsers.length ?? 0; x++) {
+      if (allUsers[x].uid != currentUserModel.uid &&
+          allUsers[x].username == username) flag = false;
+    }
+    if (flag) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserModel.uid)
+          .update({
+        "username": username,
+        "name": displayname,
+        "bio": bio,
+        "isPrivate": isPrivate,
+        "profile_picture": _uploadedFileURL ?? currentUserModel.photoUrl,
+      });
+      DocumentSnapshot userRecord =
+          await usersReference.doc(auth.currentUser.uid).get();
+      currentUserModel = UserClass.fromDocument(userRecord);
+      changeSuccess = true;
+    } else {
+      changeSuccess = false;
+      print("Username must be unique");
+    }
   }
 
   @override
@@ -99,7 +147,7 @@ class _EditProfile extends State<EditProfile> {
                       padding: const EdgeInsets.all(8.0),
                       child: CircleAvatar(
                         radius: 55,
-                        backgroundImage: NetworkImage(picture),
+                        backgroundImage: NetworkImage(_uploadedFileURL),
                         backgroundColor: Colors.grey,
                       ),
                     )
@@ -121,6 +169,7 @@ class _EditProfile extends State<EditProfile> {
                           _image = File(imageFile.path);
                         });
                         _uploadedFileURL = await uploadImage(_image);
+                        setState(() {});
                       },
                       child: Text(
                         'Change Profile Picture',
@@ -233,14 +282,21 @@ class _EditProfile extends State<EditProfile> {
               Center(
                 child: OutlinedButton(
                   onPressed: () async {
+                    changeSuccess = false;
                     _setLogEvent("Profile Edit", "Submit button pressed.");
                     if (editKey.currentState.validate()) {
                       editKey.currentState.save();
-                      applyChanges();
-                      setState(() {});
+                      applyChanges().whenComplete(() {
+                        if (changeSuccess) {
+                          print("Success.");
+                          Navigator.pushNamedAndRemoveUntil(context,
+                              '/navigator', (Route<dynamic> route) => false);
+                        } else {
+                          showAlertDialog();
+                          print("Changes are not saved.");
+                        }
+                      });
                     }
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, '/navigator', (Route<dynamic> route) => false);
                   },
                   child: Text(
                     'Submit Changes',

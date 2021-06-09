@@ -21,7 +21,14 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.6.1"
+    version: "2.5.0"
+  better_player:
+    dependency: "direct main"
+    description:
+      name: better_player
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.69"
   boolean_selector:
     dependency: transitive
     description:
@@ -92,6 +99,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  csslib:
+    dependency: transitive
+    description:
+      name: csslib
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.17.0"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -275,6 +289,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_widget_from_html_core:
+    dependency: transitive
+    description:
+      name: flutter_widget_from_html_core
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.1+1"
   font_awesome_flutter:
     dependency: transitive
     description:
@@ -303,6 +324,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.9.2"
+  html:
+    dependency: transitive
+    description:
+      name: html
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.15.0"
   http:
     dependency: transitive
     description:
@@ -609,27 +637,48 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  video_player:
-    dependency: "direct main"
-    description:
-      name: video_player
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.11.1+5"
-  video_player_platform_interface:
+  visibility_detector:
     dependency: transitive
     description:
-      name: video_player_platform_interface
+      name: visibility_detector
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
-  video_player_web:
+    version: "0.2.0"
+  wakelock:
     dependency: transitive
     description:
-      name: video_player_web
+      name: wakelock
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.4+1"
+    version: "0.5.2"
+  wakelock_macos:
+    dependency: transitive
+    description:
+      name: wakelock_macos
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0+1"
+  wakelock_platform_interface:
+    dependency: transitive
+    description:
+      name: wakelock_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1+1"
+  wakelock_web:
+    dependency: transitive
+    description:
+      name: wakelock_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0+1"
+  wakelock_windows:
+    dependency: transitive
+    description:
+      name: wakelock_windows
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   win32:
     dependency: transitive
     description:
@@ -653,4 +702,4 @@ packages:
     version: "5.1.1"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=1.24.0-10"
+  flutter: ">=2.0.0"

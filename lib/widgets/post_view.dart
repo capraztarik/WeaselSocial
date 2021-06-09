@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:weasel_social_media_app/Screens/comment_screen.dart';
 import 'package:weasel_social_media_app/Screens/profile.dart';
 import 'package:weasel_social_media_app/main.dart';
-import 'package:video_player/video_player.dart';
+import 'package:better_player/better_player.dart';
 import 'package:weasel_social_media_app/models/post_info.dart';
 
 class PostCard extends StatefulWidget {
@@ -56,9 +56,7 @@ class _PostCard extends State<PostCard> {
   int likeCount = 0;
   bool liked = false;
   List<PostInfo> allPostList = [];
-  VideoPlayerController _cameraVideoPlayerController;
   String currentUserId = currentUserModel.uid;
-  Future<void> _initializeVideoPlayerFuture;
   _PostCard(
       {this.username,
       this.caption,
@@ -69,26 +67,6 @@ class _PostCard extends State<PostCard> {
       this.liked});
 
   @override
-  /*void initState() {
-
-    if(mediaUrl.contains('mp4'))
-    {
-    _cameraVideoPlayerController = VideoPlayerController.network(mediaUrl);
-
-    /*_initializeVideoPlayerFuture = _cameraVideoPlayerController.initialize();*/
-    /*TODO ERROR CAUSED BY THİS LİNE*/
-    _cameraVideoPlayerController.setLooping(true);
-    }
-
-    super.initState();
-  }*/
-  /*@override
-  void dispose() {
-    // Ensure disposing of the VideoPlayerController to free up resources.
-    _cameraVideoPlayerController.dispose();
-
-    super.dispose();
-  }*/
 
   GestureDetector buildLikeIcon() {
     Color color;
@@ -219,41 +197,18 @@ class _PostCard extends State<PostCard> {
         child: Image.network(mediaUrl),
       );
     } else {
-      _cameraVideoPlayerController = VideoPlayerController.network(mediaUrl);
       return GestureDetector(
         onDoubleTap: () => _likePost(),
-        onTap: () => _cameraVideoPlayerController.play(),
-        onTapCancel: () => _cameraVideoPlayerController.pause(),
         child: AspectRatio(
-          aspectRatio: _cameraVideoPlayerController.value.aspectRatio,
-          // Use the VideoPlayer widget to display the video.
-          child: VideoPlayer(_cameraVideoPlayerController),
-        ),
+          aspectRatio: 16 / 9,
+          child: BetterPlayer.network(
+           mediaUrl,
+            betterPlayerConfiguration: BetterPlayerConfiguration(
+              aspectRatio: 16 / 9,
+            ),
+          ),
+        )
       );
-
-      /*return GestureDetector(
-        onDoubleTap: () => _likePost(),
-        onTap: () =>  _cameraVideoPlayerController.play(),
-        onTapCancel:() =>_cameraVideoPlayerController.pause(),
-        child:FutureBuilder(
-          future: _initializeVideoPlayerFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              // If the VideoPlayerController has finished initialization, use
-              // the data it provides to limit the aspect ratio of the video.
-              return AspectRatio(
-                aspectRatio: _cameraVideoPlayerController.value.aspectRatio,
-                // Use the VideoPlayer widget to display the video.
-                child: VideoPlayer(_cameraVideoPlayerController),
-              );
-            } else {
-              // If the VideoPlayerController is still initializing, show a
-              // loading spinner.
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-    );*/
     }
   }
 

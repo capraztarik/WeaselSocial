@@ -18,13 +18,12 @@ class NotificationCard extends StatefulWidget {
   final String notificationType;
   final String uid;
 
-
   _NotificationCard createState() => _NotificationCard(
         username: this.username,
         photoUrl: this.photoUrl,
         profilePhotoUrl: this.profilePhotoUrl,
         notificationType: this.notificationType,
-         uid: this.uid,
+        uid: this.uid,
       );
 }
 
@@ -49,6 +48,8 @@ class _NotificationCard extends State<NotificationCard> {
     Color color;
     IconData icon;
 
+    if (currentUserModel.followings.containsKey(widget.uid) &&
+        currentUserModel.followings[widget.uid] == true) followed = true;
     if (followed) {
       color = Colors.pink;
       icon = Icons.auto_awesome;
@@ -60,7 +61,7 @@ class _NotificationCard extends State<NotificationCard> {
     return GestureDetector(
         child: Icon(
           icon,
-          size: 25.0,
+          size: 40.0,
           color: color,
         ),
         onTap: () {
@@ -75,38 +76,37 @@ class _NotificationCard extends State<NotificationCard> {
           }
         });
   }
-  buildTrailer(){
+
+  buildTrailer() {
     Color _iconColor = Colors.black26;
-    if(notificationType=="like"||notificationType=="comment") {return Image.network(photoUrl);}
-    else if(notificationType=="follow"){
+    if (notificationType == "like" || notificationType == "comment") {
+      return Image.network(photoUrl);
+    } else if (notificationType == "follow") {
       return buildFollowIcon();
-    }
-    else if(notificationType=="followrequest"){
+    } else if (notificationType == "followrequest") {
       return Container(
         height: 50,
         width: 100,
-        child: Row(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.check_circle_rounded,color: _iconColor),
-                onPressed: () {
-                setState(() {
-                  _iconColor = Colors.green;
-                   acceptRequest();
-                });
-              },
-              ),
-              IconButton(
-                icon: Icon(Icons.do_not_disturb,color: _iconColor),
-                onPressed: () {
-                  setState(() {
-                    _iconColor = Colors.red;
-                    unfollow();
-                  });
-                },
-              ),
-            ]
-        ),
+        child: Row(children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.check_circle_rounded, color: _iconColor),
+            onPressed: () {
+              setState(() {
+                _iconColor = Colors.green;
+                acceptRequest();
+              });
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.do_not_disturb, color: _iconColor),
+            onPressed: () {
+              setState(() {
+                _iconColor = Colors.red;
+                unfollow();
+              });
+            },
+          ),
+        ]),
       );
     }
   }
@@ -132,7 +132,14 @@ class _NotificationCard extends State<NotificationCard> {
     if (notificationType == "followrequest") {
       notification = "requested to follow you.";
     }
-    return ListTile(
+    if (photoUrl.contains("mp4")) {
+      if (notificationType == "like") {
+        notification = "liked your video.";
+      }
+      if (notificationType == "comment") {
+        notification = "comment on your video.";
+      }
+      return ListTile(
         leading: CircleAvatar(
           //backgroundImage: AssetImage(DemoValues.userImage),
           backgroundImage: NetworkImage(profilePhotoUrl),
@@ -150,10 +157,33 @@ class _NotificationCard extends State<NotificationCard> {
           },
         ),
         subtitle: Text(notification),
-        trailing: GestureDetector(
-          child: buildTrailer(),
-
-        ));
+        trailing: Icon(
+          Icons.play_circle_outline_rounded,
+          size: 40,
+        ),
+      );
+    } else
+      return ListTile(
+          leading: CircleAvatar(
+            //backgroundImage: AssetImage(DemoValues.userImage),
+            backgroundImage: NetworkImage(profilePhotoUrl),
+            backgroundColor: Colors.grey,
+          ),
+          title: GestureDetector(
+            child: Text(ownerId),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(uid: this.uid),
+                ),
+              );
+            },
+          ),
+          subtitle: Text(notification),
+          trailing: GestureDetector(
+            child: buildTrailer(),
+          ));
   }
 
   Widget build(BuildContext context) {
@@ -172,15 +202,11 @@ class _NotificationCard extends State<NotificationCard> {
   }
 
   void goToPost() {}
-  void follow(){
+  void follow() {
     print('following user');
 
-    usersReference
-        .doc(currentUserModel.uid)
-        .update({'followings.$uid': true});
-    usersReference
-        .doc(uid)
-        .update({'followers.$logineduseruid': true});
+    usersReference.doc(currentUserModel.uid).update({'followings.$uid': true});
+    usersReference.doc(uid).update({'followers.$logineduseruid': true});
 
     FirebaseFirestore.instance
         .collection("notifications")
@@ -192,39 +218,20 @@ class _NotificationCard extends State<NotificationCard> {
       "type": "follow",
       "userProfileImg": currentUserModel.photoUrl,
       "timestamp": Timestamp.now(),
+      "mediaUrl": ""
     });
   }
-  void unfollow(){
-    usersReference
-        .doc(currentUserModel.uid)
-        .update({'followings.$uid': false});
-    usersReference
-        .doc(uid)
-        .update({'followers.$logineduseruid': false});
 
-    /*TODO*/
-    /* delete her items from feed
-       FirebaseFirestore.instance
-        .collection("insta_a_feed")
-        .doc(profileId)
-        .collection("items")
-        .doc(currentUserId)
-        .delete();*/
+  void unfollow() {
+    usersReference.doc(currentUserModel.uid).update({'followings.$uid': false});
+    usersReference.doc(uid).update({'followers.$logineduseruid': false});
   }
+
   void acceptRequest() {
     print('following user');
-    setState(() {
+    usersReference.doc(currentUserModel.uid).update({'followers.$uid': true});
+    usersReference.doc(uid).update({'followings.$logineduseruid': true});
 
-    });
-    usersReference
-        .doc(currentUserModel.uid)
-        .update({'followers.$uid': true});
-    usersReference
-        .doc(uid)
-        .update({'followings.$logineduseruid': true});
-
-    setState(() {
-
-    });
+    setState(() {});
   }
 }

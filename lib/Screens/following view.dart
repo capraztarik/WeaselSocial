@@ -6,14 +6,15 @@ import 'package:weasel_social_media_app/main.dart';
 import 'package:weasel_social_media_app/models/userclass.dart';
 import 'package:weasel_social_media_app/widgets/Followers_view.dart';
 
-class Followers_view extends StatefulWidget {
+class Followings_view extends StatefulWidget {
   @override
-  _Followers_viewState createState() => _Followers_viewState();
+  _Followings_viewState createState() => _Followings_viewState();
 }
 
-class _Followers_viewState extends State<Followers_view>
-    with AutomaticKeepAliveClientMixin<Followers_view> {
-  List<FollowersCard> followersCardList = []; //views that we generated.
+class _Followings_viewState extends State<Followings_view>
+    with AutomaticKeepAliveClientMixin<Followings_view> {
+  List<FollowersCard> followersCardList = [];
+  List<FollowersCard> followingsCardList = []; //views that we generated.
   List<UserClass> followersList = []; //info taken from backend
   List<UserClass> allUsers = [];
   List<UserClass> followerUsersfinal = [];
@@ -40,13 +41,13 @@ class _Followers_viewState extends State<Followers_view>
 
   Future<void> initialFunction() async {
     await getuser();
-    await _getFollowers();
+    await _getFollowings();
     //await _getFollowings();
   }
 
   Future<void> _setCurrentScreen() async {
     await FirebaseAnalytics().setCurrentScreen(
-      screenName: 'Notifications Page',
+      screenName: 'Followings page',
     );
     print('setCurrentScreen succeeded');
   }
@@ -62,25 +63,24 @@ class _Followers_viewState extends State<Followers_view>
     }
   }
 
-  _getFollowers() async {
-    List list = currentUserModel.followers.keys.toList() ?? [];
+  _getFollowings() async {
+    List list = currentUserModel.followings.keys.toList() ?? [];
     for (int x = 0; x < list.length; x++) {
       for (int y = 0; y < allUsers.length ?? 0; y++) {
-        if (list[x] == allUsers[y].uid) followerUsersfinal.add(allUsers[y]);
+        if (list[x] == allUsers[y].uid) followingUsersfinal.add(allUsers[y]);
       }
     }
-    generateFollowers(followerUsersfinal);
+    generateFollowings(followingUsersfinal);
   }
 
-  generateFollowers(List<UserClass> followerUsersfinal) {
-    /* TODO Generates notifCards(view) with information taken from backend*/
-    for (int x = 0; x < followerUsersfinal.length ?? 0; x++) {
+  generateFollowings(List<UserClass> followingUsersfinal) {
+    for (int x = 0; x < followingUsersfinal.length ?? 0; x++) {
       FollowersCard temp = FollowersCard(
-        username: followerUsersfinal[x].username,
-        profilePhotoUrl: followerUsersfinal[x].photoUrl,
-        uid: followerUsersfinal[x].uid,
+        username: followingUsersfinal[x].username,
+        profilePhotoUrl: followingUsersfinal[x].photoUrl,
+        uid: followingUsersfinal[x].uid,
       );
-      followersCardList.add(temp);
+      followingsCardList.add(temp);
     }
   }
 
@@ -98,9 +98,9 @@ class _Followers_viewState extends State<Followers_view>
   }*/
 
   buildFollowers() {
-    if (followersCardList != null && followersCardList.length != 0) {
+    if (followingsCardList != null && followingsCardList.length != 0) {
       return ListView(
-        children: followersCardList,
+        children: followingsCardList,
       );
     } else {
       return Container(
@@ -140,9 +140,9 @@ class _Followers_viewState extends State<Followers_view>
 
   Future<Null> _refresh() async {
     await getuser();
-    await _getFollowers();
+    await _getFollowings();
     //await _getFollowings();
-    generateFollowers(followerUsersfinal);
+    generateFollowings(followingUsersfinal);
 
     _setLogEvent(
         "_getFollowers, getFollowings", "Following ans Followers refreshed.");

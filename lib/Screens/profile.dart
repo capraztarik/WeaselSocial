@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:weasel_social_media_app/main.dart';
 import 'package:weasel_social_media_app/widgets/post_view.dart';
 import '../models/userclass.dart';
 import 'followers view.dart';
+import 'following view.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({this.uid});
@@ -88,21 +93,46 @@ class _ProfilePage extends State<ProfilePage>
     print("Starting getting Posts");
     _setLogEvent("Profile", "Profile posts fetched.");
 
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection("posts").get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("posts")
+        .orderBy("timestamp", descending: true)
+        .get();
     for (int i = 0; i < querySnapshot.docs.length; i++) {
       if (profileowneruid == querySnapshot.docs[i]["ownerId"]) {
-        //Image temp = Image.network(querySnapshot.docs[i]["mediaUrl"]);
-        userPosts.add(Container(
-          height: 20,
-          width: 25,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage(querySnapshot.docs[i]["mediaUrl"]),
+        String url = querySnapshot.docs[i]["mediaUrl"];
+        if (url.contains("mp4")) {
+          print("video");
+          final path = await VideoThumbnail.thumbnailFile(
+            video: url,
+            thumbnailPath: (await getTemporaryDirectory()).path,
+            imageFormat: ImageFormat.JPEG,
+            maxHeight:
+                64, // specify the height of the thumbnail, let the width auto-scaled to keep the source aspect ratio
+            quality: 100,
+          );
+
+          userPosts.add(Container(
+            height: 20,
+            width: 25,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: FileImage(File(path)),
+              ),
             ),
-          ),
-        ));
+          ));
+        } else {
+          userPosts.add(Container(
+            height: 20,
+            width: 25,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(url),
+              ),
+            ),
+          ));
+        }
       }
     }
 
@@ -169,7 +199,7 @@ class _ProfilePage extends State<ProfilePage>
       "type": "follow",
       "userProfileImg": currentUserModel.photoUrl,
       "timestamp": Timestamp.now(),
-      "mediaUrl": ""
+      "mediaUrl": "",
     });
     setState(() {
       updateUser();
@@ -379,10 +409,19 @@ class _ProfilePage extends State<ProfilePage>
                                                 Followers_view()));
                                   },
                                 ),
-                                buildStatColumn(
-                                    "followings",
-                                    _countFollowings(
-                                        currentProfile.followings)),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Followings_view()));
+                                  },
+                                  child: buildStatColumn(
+                                      "followings",
+                                      _countFollowings(
+                                          currentProfile.followings)),
+                                ),
                               ],
                             ),
                             Row(

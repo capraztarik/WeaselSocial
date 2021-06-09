@@ -16,16 +16,15 @@ class _NotificationsState extends State<Notifications>
     with AutomaticKeepAliveClientMixin<Notifications> {
   List<NotificationCard> notificationCardList = []; //views that we generated.
   List<notification_info> notificationList = []; //info taken from backend
-  bool finished=false;
+  bool finished = false;
   bool firstLoad = true;
 
   void initState() {
     super.initState();
-    this._getNotifications();
     _setCurrentScreen();
     initialFunction().whenComplete(() => setState(() {
-      firstLoad = false;
-    }));
+          firstLoad = false;
+        }));
   }
 
   Future<void> initialFunction() async {
@@ -60,28 +59,28 @@ class _NotificationsState extends State<Notifications>
         photoUrl: notificationList[index].photoUrl,
         notificationType: notificationList[index].notificationType,
         profilePhotoUrl: notificationList[index].profilePhotoUrl,
-        uid:notificationList[index].uid,
+        uid: notificationList[index].uid,
       );
       notificationCardList.add(temp);
       index++;
     }
-    finished=true;
+    finished = true;
   }
 
   buildNotifications() {
     /*This creates notif view from list of notif card views*/
-    if(finished){
-    if (notificationCardList.isNotEmpty) {
-      return ListView(
-        children: notificationCardList,
-      );
+    if (finished) {
+      if (notificationCardList.isNotEmpty) {
+        return ListView(
+          children: notificationCardList,
+        );
+      } else {
+        return Center(
+          child:
+              Text("Welcome to Weasel, you will see your notifications here!"),
+        );
+      }
     } else {
-      return Center(
-          child:Text("Welcome to Weasel, you will see your notifications here!"),
-      );
-    }
-    }
-    else{
       return Center(child: CircularProgressIndicator());
     }
   }
@@ -89,10 +88,15 @@ class _NotificationsState extends State<Notifications>
   _getNotifications() async {
     notificationList.clear();
 
-    QuerySnapshot querySnapshot =
-    await FirebaseFirestore.instance.collection("notifications").doc(currentUserModel.uid).collection("items").orderBy("timestamp", descending: true).get();
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("notifications")
+        .doc(currentUserModel.uid)
+        .collection("items")
+        .orderBy("timestamp", descending: true)
+        .get();
     for (int i = 0; i < querySnapshot.docs.length ?? 0; i++) {
-      notification_info temp = notification_info.fromDocument(querySnapshot.docs[i]);
+      notification_info temp =
+          notification_info.fromDocument(querySnapshot.docs[i]);
       notificationList.add(temp);
     }
 
@@ -107,10 +111,10 @@ class _NotificationsState extends State<Notifications>
     if (firstLoad) {
       return Scaffold(
           body: SafeArea(
-            child: Center(
-                child: Container(
-                    height: 50, width: 50, child: CircularProgressIndicator())),
-          ));
+        child: Center(
+            child: Container(
+                height: 50, width: 50, child: CircularProgressIndicator())),
+      ));
     } else {
       return Scaffold(
         appBar: AppBar(

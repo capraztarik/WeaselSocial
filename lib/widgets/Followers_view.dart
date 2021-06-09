@@ -14,15 +14,14 @@ class FollowersCard extends StatefulWidget {
   final String uid;
 
   _FollowersCard createState() => _FollowersCard(
-    username: this.username,
-    profilePhotoUrl: this.profilePhotoUrl,
-    notificationType: this.notificationType,
-    uid: this.uid,
-  );
+        username: this.username,
+        profilePhotoUrl: this.profilePhotoUrl,
+        notificationType: this.notificationType,
+        uid: this.uid,
+      );
 }
 
 class _FollowersCard extends State<FollowersCard> {
-
   final String profilePhotoUrl;
   final String username;
   final String uid;
@@ -60,29 +59,25 @@ class _FollowersCard extends State<FollowersCard> {
         });
   }
 
-  buildNotification(
-      {String ownerId,
-        String profilePhotoUrl}) {
-    String notification;
-
+  buildNotification({String ownerId, String profilePhotoUrl}) {
     return ListTile(
-        leading: CircleAvatar(
-          //backgroundImage: AssetImage(DemoValues.userImage),
-          backgroundImage: NetworkImage(profilePhotoUrl),
-          backgroundColor: Colors.grey,
-        ),
-        title: GestureDetector(
-          child: Text(ownerId),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProfilePage(uid: this.uid),
-              ),
-            );
-          },
-        ),
-      );
+      leading: CircleAvatar(
+        //backgroundImage: AssetImage(DemoValues.userImage),
+        backgroundImage: NetworkImage(profilePhotoUrl),
+        backgroundColor: Colors.grey,
+      ),
+      title: GestureDetector(
+        child: Text(ownerId),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfilePage(uid: this.uid),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget build(BuildContext context) {
@@ -92,9 +87,9 @@ class _FollowersCard extends State<FollowersCard> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         buildNotification(
-            ownerId: this.username,
-            profilePhotoUrl: this.profilePhotoUrl,
-            ),
+          ownerId: this.username,
+          profilePhotoUrl: this.profilePhotoUrl,
+        ),
       ],
     );
   }

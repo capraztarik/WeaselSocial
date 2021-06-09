@@ -11,6 +11,7 @@ import 'Screens/Search.dart';
 import 'Screens/comment_screen.dart';
 import 'Screens/feed.dart';
 import 'Screens/followers view.dart';
+import 'Screens/following view.dart';
 import 'Screens/login.dart';
 import 'Screens/notifications.dart';
 import 'Screens/profile.dart';
@@ -96,6 +97,7 @@ class _MyAppState extends State<MyApp> {
         '/share_post': (context) => Uploader(),
         '/comments': (context) => CommentScreen(),
         '/followers': (context) => Followers_view(),
+        '/following': (context) => Followings_view(),
       },
     );
   }

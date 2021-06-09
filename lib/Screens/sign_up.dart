@@ -76,8 +76,7 @@ class _SignUpState extends State<SignUp> {
 
   Future<void> signupUser() async {
     try {
-      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
-          email: mail, password: pass);
+      await auth.createUserWithEmailAndPassword(email: mail, password: pass);
 
       //DocumentSnapshot userRecord = await usersReference.doc(user.id).get();
 

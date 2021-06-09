@@ -66,8 +66,6 @@ class _PostCard extends State<PostCard> {
       this.profilePhotoUrl,
       this.liked});
 
-  @override
-
   GestureDetector buildLikeIcon() {
     Color color;
     IconData icon;
@@ -198,17 +196,16 @@ class _PostCard extends State<PostCard> {
       );
     } else {
       return GestureDetector(
-        onDoubleTap: () => _likePost(),
-        child: AspectRatio(
-          aspectRatio: 16 / 9,
-          child: BetterPlayer.network(
-           mediaUrl,
-            betterPlayerConfiguration: BetterPlayerConfiguration(
-              aspectRatio: 16 / 9,
+          onDoubleTap: () => _likePost(),
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: BetterPlayer.network(
+              mediaUrl,
+              betterPlayerConfiguration: BetterPlayerConfiguration(
+                aspectRatio: 16 / 9,
+              ),
             ),
-          ),
-        )
-      );
+          ));
     }
   }
 

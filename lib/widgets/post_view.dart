@@ -126,6 +126,49 @@ class _PostCard extends State<PostCard> {
       return true;
   }
 
+  Future<void> showAlertDialog() async {
+    String edit = widget.caption;
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false, //User must tap button
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Edit Post Caption"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  TextField(
+                    onChanged: (value) {
+                      edit = value;
+                    },
+                  )
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text('Submit'),
+                onPressed: () {
+                  FirebaseFirestore.instance
+                      .collection('posts')
+                      .doc(widget.pid)
+                      .update({
+                    "description": edit,
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   void _likePost(/*String postId2*/) {
     //bool _liked = false;
 
@@ -247,10 +290,37 @@ class _PostCard extends State<PostCard> {
               },
               child: Text(ownerId)),
           //subtitle: Text(""),
-          trailing: GestureDetector(
-            child: Icon(Icons.report_gmailerrorred_outlined),
-            onTap: () {
-              //openPostSettings();
+          trailing: PopupMenuButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+            itemBuilder: (context) {
+              List<PopupMenuEntry<Object>> list = [];
+              if (widget.uid == currentUserId) {
+                list.add(
+                    PopupMenuItem(child: Text("Edit Post"), value: "edit"));
+              } else
+                list.add(PopupMenuItem(child: Text("Report"), value: "report"));
+              return list;
+            },
+            icon: Icon(Icons.menu, size: 25),
+            onSelected: (value) {
+              if (value == "edit") {
+                showAlertDialog();
+                print("edit pressed");
+              } else {
+                var reference =
+                    FirebaseFirestore.instance.collection('reports');
+                reference.add({
+                  "reported_post": widget.pid,
+                  "reported_user_id": widget.uid,
+                  "reported_username": widget.username,
+                  "reporting_user": currentUserId,
+                  "reported_post_caption": widget.caption,
+                  "reported_post_media": widget.mediaUrl,
+                  "timestamp": DateTime.now(),
+                });
+                print("Successfully reported.");
+              }
             },
           )),
       onTap: () {

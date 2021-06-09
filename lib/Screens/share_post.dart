@@ -149,6 +149,32 @@ class PostForm extends StatefulWidget {
 class _PostFormState extends State<PostForm> {
   ImagePicker imagePicker = ImagePicker();
 
+  Future<void> showAlertDialog(String title, String message) async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false, //User must tap button
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  Text(message),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   _selectImage(BuildContext parentContext) async {
     return showDialog<Null>(
       context: parentContext,
@@ -195,6 +221,7 @@ class _PostFormState extends State<PostForm> {
                     file = File(imageFile.path);
                     isVideo = true;
                   });
+                  showAlertDialog("Success", "Video successfully added.");
                 }),
             SimpleDialogOption(
                 child: const Text('Capture a Video'),

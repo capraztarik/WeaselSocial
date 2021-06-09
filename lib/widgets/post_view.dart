@@ -102,6 +102,32 @@ class _PostCard extends State<PostCard> {
       return true;
   }
 
+  Future<void> showAlertDialog2(String title, String message) async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false, //User must tap button
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  Text(message),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   Future<void> showAlertDialog() async {
     String edit = widget.caption;
     return showDialog<void>(
@@ -250,6 +276,8 @@ class _PostCard extends State<PostCard> {
               if (widget.uid == currentUserId) {
                 list.add(
                     PopupMenuItem(child: Text("Edit Post"), value: "edit"));
+                list.add(
+                    PopupMenuItem(child: Text("Delete Post"), value: "delete"));
               } else
                 list.add(PopupMenuItem(child: Text("Report"), value: "report"));
               return list;
@@ -259,6 +287,10 @@ class _PostCard extends State<PostCard> {
               if (value == "edit") {
                 showAlertDialog();
                 print("edit pressed");
+              } else if (value == "delete") {
+                var reference = FirebaseFirestore.instance.collection('posts');
+                reference.doc(widget.pid).delete();
+                showAlertDialog2("Success", "Post successfully deleted.");
               } else {
                 var reference =
                     FirebaseFirestore.instance.collection('reports');
@@ -272,6 +304,7 @@ class _PostCard extends State<PostCard> {
                   "timestamp": DateTime.now(),
                 });
                 print("Successfully reported.");
+                showAlertDialog2("Success", "Post successfully reported.");
               }
             },
           )),
@@ -343,7 +376,8 @@ class _PostCard extends State<PostCard> {
                       "likes": [],
                       "comments": {},
                       "mediaUrl": widget.mediaUrl,
-                      "description": widget.caption,
+                      "description": "[Reposted from ${widget.username}] " +
+                          widget.caption,
                       "ownerId": currentUserModel.uid,
                       "profilePhotoUrl": currentUserModel.photoUrl,
                       "timestamp": DateTime.now(),
